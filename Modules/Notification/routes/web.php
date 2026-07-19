@@ -1,5 +1,10 @@
 <?php
 
-// Notification center UI ships in a later phase — see
-// docs/architecture/08-roadmap.md Phase 5. This module currently provides
-// the notifications/notification_preferences schema and dispatch infra.
+use Illuminate\Support\Facades\Route;
+use Modules\Notification\Http\Controllers\NotificationCenterController;
+
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationCenterController::class, 'index'])->name('index');
+    Route::post('{id}/read', [NotificationCenterController::class, 'markRead'])->name('read');
+    Route::post('read-all', [NotificationCenterController::class, 'markAllRead'])->name('read-all');
+});

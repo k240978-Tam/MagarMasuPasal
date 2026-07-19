@@ -21,6 +21,9 @@
         @if ($sale->branch)
             <div class="muted">{{ $sale->branch->name }}</div>
         @endif
+        @if (!empty($template['header_note']))
+            <div class="muted">{{ $template['header_note'] }}</div>
+        @endif
         <div class="muted">{{ $sale->completed_at->format('d M Y, h:i A') }}</div>
     </div>
 
@@ -66,11 +69,13 @@
         @endforeach
     </table>
 
-    <div class="center" style="margin-top: 12px;">
-        <img src="data:image/svg+xml;base64,{{ $qrSvg }}" width="90" height="90">
-        <div class="muted" style="margin-top: 4px;">{{ $sale->public_id }}</div>
-    </div>
+    @if ($qrSvg)
+        <div class="center" style="margin-top: 12px;">
+            <img src="data:image/svg+xml;base64,{{ $qrSvg }}" width="90" height="90">
+            <div class="muted" style="margin-top: 4px;">{{ $sale->public_id }}</div>
+        </div>
+    @endif
 
-    <div class="center bold" style="margin-top: 10px;">Thank you for shopping with us!</div>
+    <div class="center bold" style="margin-top: 10px;">{{ $template['footer_text'] }}</div>
 </body>
 </html>

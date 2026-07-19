@@ -2,8 +2,8 @@
 
 namespace Modules\Notification\Models;
 
-use App\Support\Tenancy\BelongsToTenant;
 use App\Models\User;
+use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 
 class NotificationPreference extends Model

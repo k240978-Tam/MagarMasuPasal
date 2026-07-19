@@ -106,6 +106,7 @@
                     <div class="flex flex-col gap-1 border-t border-dashed border-line-strong pt-2 text-sm">
                         <div class="flex justify-between text-ink-soft"><span>Subtotal</span><span class="tabular-nums" x-text="'Rs ' + (cart.subtotal || 0).toFixed(2)"></span></div>
                         <div class="flex justify-between text-ink-soft"><span>Discount</span><span class="tabular-nums" x-text="'− Rs ' + (cart.discount_amount || 0).toFixed(2)"></span></div>
+                        <div x-show="cart.tax_amount > 0" class="flex justify-between text-ink-soft"><span>Tax</span><span class="tabular-nums" x-text="'+ Rs ' + (cart.tax_amount || 0).toFixed(2)"></span></div>
                         <div class="flex justify-between pt-1 text-lg font-bold"><span>Total</span><span class="tabular-nums" x-text="'Rs ' + (cart.total_amount || 0).toFixed(2)"></span></div>
                     </div>
 

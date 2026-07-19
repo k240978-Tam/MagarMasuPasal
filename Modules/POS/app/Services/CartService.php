@@ -8,6 +8,7 @@ use Modules\Customers\Models\Customer;
 use Modules\POS\Events\TerminalStateUpdated;
 use Modules\POS\Models\HeldBill;
 use Modules\Products\Models\Product;
+use Modules\Settings\Services\TaxCalculationService;
 use Modules\Tenancy\Models\BranchTerminal;
 use RuntimeException;
 
@@ -20,6 +21,8 @@ use RuntimeException;
  */
 class CartService
 {
+    public function __construct(protected TaxCalculationService $tax) {}
+
     protected function cacheKey(BranchTerminal $terminal): string
     {
         return "pos.terminal.{$terminal->id}.cart";
@@ -55,6 +58,7 @@ class CartService
                 'sell_by_weight' => $product->sell_by_weight,
                 'quantity' => $quantity,
                 'unit_price' => (float) $product->selling_price,
+                'tax_rate' => $this->tax->rateForRule($product->business_id, $product->tax_rule_id),
             ];
         }
 
@@ -182,18 +186,28 @@ class CartService
 
     protected function recalculate(array $cart): array
     {
+        $discountPercent = $cart['discount_percent'] ?? 0;
         $subtotal = 0;
+        $taxAmount = 0;
 
-        foreach ($cart['items'] as $item) {
-            $subtotal += $item['quantity'] * $item['unit_price'];
+        foreach ($cart['items'] as $key => $item) {
+            $lineGross = $item['quantity'] * $item['unit_price'];
+            $subtotal += $lineGross;
+
+            // The cart-level discount % applies uniformly to every line, so
+            // tax is computed on the post-discount taxable amount per line.
+            $taxableAmount = $lineGross * (1 - $discountPercent / 100);
+            $lineTax = round($taxableAmount * (($item['tax_rate'] ?? 0) / 100), 2);
+            $cart['items'][$key]['tax_amount'] = $lineTax;
+            $taxAmount += $lineTax;
         }
 
-        $discountAmount = round($subtotal * (($cart['discount_percent'] ?? 0) / 100), 2);
+        $discountAmount = round($subtotal * ($discountPercent / 100), 2);
 
         $cart['subtotal'] = round($subtotal, 2);
         $cart['discount_amount'] = $discountAmount;
-        $cart['tax_amount'] = 0;
-        $cart['total_amount'] = round($subtotal - $discountAmount, 2);
+        $cart['tax_amount'] = round($taxAmount, 2);
+        $cart['total_amount'] = round($subtotal - $discountAmount + $taxAmount, 2);
 
         return $cart;
     }

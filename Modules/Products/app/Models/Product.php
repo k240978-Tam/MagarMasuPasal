@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Modules\AuditLog\Traits\Auditable;
 use Modules\Categories\Models\Category;
+use Modules\Settings\Models\TaxRule;
 use Modules\Units\Models\Unit;
 
 class Product extends Model
@@ -32,6 +33,7 @@ class Product extends Model
         'default_supplier_id',
         'image_media_id',
         'status',
+        'tax_rule_id',
     ];
 
     protected $casts = [
@@ -71,5 +73,10 @@ class Product extends Model
     public function attributeValues()
     {
         return $this->hasMany(ProductAttributeValue::class);
+    }
+
+    public function taxRule()
+    {
+        return $this->belongsTo(TaxRule::class);
     }
 }

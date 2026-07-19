@@ -3,6 +3,7 @@
 namespace Tests\Feature\Analytics;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\Analytics\Models\DailySalesAggregate;
 use Modules\Analytics\Models\ProductPerformanceAggregate;
 use Modules\Analytics\Services\AggregationService;
@@ -12,7 +13,6 @@ use Modules\Sales\Models\SaleItem;
 use Modules\Tenancy\Database\Factories\BranchFactory;
 use Modules\Tenancy\Models\BranchTerminal;
 use Modules\Units\Models\Unit;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**

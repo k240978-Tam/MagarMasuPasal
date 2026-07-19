@@ -3,6 +3,7 @@
 namespace Tests\Feature\Dashboard;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\Dashboard\Services\DashboardService;
 use Modules\Products\Models\Product;
 use Modules\Sales\Models\Sale;
@@ -10,7 +11,6 @@ use Modules\Sales\Models\SaleItem;
 use Modules\Tenancy\Database\Factories\BranchFactory;
 use Modules\Tenancy\Models\BranchTerminal;
 use Modules\Units\Models\Unit;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 

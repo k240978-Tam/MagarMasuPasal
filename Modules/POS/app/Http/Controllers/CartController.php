@@ -151,6 +151,7 @@ class CartController extends Controller
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
                 'discount_amount' => round(($item['quantity'] * $item['unit_price']) * (($cart['discount_percent'] ?? 0) / 100), 2),
+                'tax_amount' => $item['tax_amount'] ?? 0,
             ], array_values($cart['items'])),
             payments: $request->input('payments') ?? [],
             customerId: $cart['customer_id'],

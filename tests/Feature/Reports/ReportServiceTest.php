@@ -3,6 +3,7 @@
 namespace Tests\Feature\Reports;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\Categories\Models\Category;
 use Modules\Products\Models\Product;
 use Modules\Reports\Services\ReportService;
@@ -11,7 +12,6 @@ use Modules\Sales\Models\SaleItem;
 use Modules\Tenancy\Database\Factories\BranchFactory;
 use Modules\Tenancy\Models\BranchTerminal;
 use Modules\Units\Models\Unit;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**

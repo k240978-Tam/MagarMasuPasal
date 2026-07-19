@@ -20,5 +20,6 @@
     "Accounting": true,
     "Analytics": true,
     "Reports": true,
-    "Dashboard": true
+    "Dashboard": true,
+    "Backup": true
 }

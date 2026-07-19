@@ -34,9 +34,27 @@
                     @can('reports.view')
                         <a href="{{ route('reports.sales') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('reports.*') ? 'bg-surface-2 text-ink' : '' }}">Reports</a>
                     @endcan
+                    @can('inventory.manage')
+                        @if (app(\Modules\Settings\Services\SettingsService::class)->isFeatureEnabled(auth()->user()->business_id, 'stock_transfers'))
+                            <a href="{{ route('inventory.transfers.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('inventory.*') ? 'bg-surface-2 text-ink' : '' }}">Transfers</a>
+                        @endif
+                    @endcan
+                    @can('settings.manage')
+                        <a href="{{ route('settings.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('settings.*') ? 'bg-surface-2 text-ink' : '' }}">Settings</a>
+                    @endcan
+                    @can('business.manage')
+                        <a href="{{ route('backups.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('backups.*') ? 'bg-surface-2 text-ink' : '' }}">Backups</a>
+                    @endcan
                 </nav>
 
                 <div class="flex items-center gap-3">
+                    <a href="{{ route('notifications.index') }}" class="relative flex h-8 w-8 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-surface-2" aria-label="Notifications">
+                        🔔
+                        @php $unread = auth()->user()->unreadNotifications()->count(); @endphp
+                        @if ($unread > 0)
+                            <span class="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-critical px-1 text-[10px] font-bold text-white">{{ $unread > 9 ? '9+' : $unread }}</span>
+                        @endif
+                    </a>
                     <button type="button" @click="theme = theme === 'dark' ? 'light' : 'dark'"
                         class="flex h-8 w-8 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-surface-2" aria-label="Toggle dark mode">
                         <span x-show="theme === 'light'">🌙</span>
