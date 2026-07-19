@@ -3,5 +3,11 @@
     "UserManagement": true,
     "Settings": true,
     "AuditLog": true,
-    "Notification": true
+    "Notification": true,
+    "Units": true,
+    "Categories": true,
+    "Products": true,
+    "Suppliers": true,
+    "Purchases": true,
+    "Inventory": true
 }
