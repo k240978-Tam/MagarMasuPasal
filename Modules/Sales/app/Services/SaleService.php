@@ -106,7 +106,7 @@ class SaleService
                 }
             }
 
-            SaleCompleted::dispatch($sale->fresh(['items', 'payments']));
+            SaleCompleted::dispatch($sale->fresh(['items', 'payments.transaction']));
 
             return $sale->fresh(['items.product', 'payments.transaction', 'customer']);
         });

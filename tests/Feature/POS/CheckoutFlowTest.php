@@ -5,6 +5,7 @@ namespace Tests\Feature\POS;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Modules\Accounting\Services\ChartOfAccountsService;
 use Modules\Inventory\Models\InventoryStock;
 use Modules\POS\Events\TerminalStateUpdated;
 use Modules\Products\Models\Product;
@@ -33,6 +34,7 @@ class CheckoutFlowTest extends TestCase
 
         $branch = BranchFactory::new()->create();
         $businessId = $branch->business_id;
+        app(ChartOfAccountsService::class)->seedDefaults($businessId);
 
         $unit = Unit::create(['name' => 'Kilogram', 'symbol' => 'kg', 'conversion_factor' => 1]);
         $product = Product::create([
@@ -90,6 +92,7 @@ class CheckoutFlowTest extends TestCase
     {
         $branch = BranchFactory::new()->create();
         $businessId = $branch->business_id;
+        app(ChartOfAccountsService::class)->seedDefaults($businessId);
 
         $unit = Unit::create(['name' => 'Piece', 'symbol' => 'pcs', 'conversion_factor' => 1]);
         $product = Product::create(['business_id' => $businessId, 'name' => 'Farm Eggs', 'unit_id' => $unit->id, 'selling_price' => 210]);

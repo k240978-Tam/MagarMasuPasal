@@ -4,6 +4,7 @@ namespace Tests\Feature\CashRegister;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Accounting\Services\ChartOfAccountsService;
 use Modules\CashRegister\Services\CashSessionService;
 use Modules\Tenancy\Database\Factories\BranchFactory;
 use Modules\Tenancy\Models\BranchTerminal;
@@ -16,6 +17,7 @@ class CashSessionTest extends TestCase
     public function test_open_record_movements_and_close_computes_variance(): void
     {
         $branch = BranchFactory::new()->create();
+        app(ChartOfAccountsService::class)->seedDefaults($branch->business_id);
         $terminal = BranchTerminal::create(['business_id' => $branch->business_id, 'branch_id' => $branch->id, 'name' => 'Counter 1']);
         $user = User::factory()->create(['business_id' => $branch->business_id]);
 

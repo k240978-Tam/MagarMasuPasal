@@ -4,6 +4,7 @@ namespace Modules\CashRegister\Services;
 
 use Illuminate\Support\Facades\DB;
 use LogicException;
+use Modules\CashRegister\Events\CashSessionClosed;
 use Modules\CashRegister\Models\CashMovement;
 use Modules\CashRegister\Models\CashSession;
 use Modules\Sales\Models\Sale;
@@ -59,7 +60,11 @@ class CashSessionService
                 'closed_at' => now(),
             ]);
 
-            return $session->fresh();
+            $session = $session->fresh();
+
+            CashSessionClosed::dispatch($session);
+
+            return $session;
         });
     }
 

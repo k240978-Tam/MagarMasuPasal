@@ -4,12 +4,18 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Modules\Accounting\Services\ChartOfAccountsService;
+use Modules\Accounting\Services\JournalEntryService;
 use Modules\Categories\Models\Category;
 use Modules\Customers\Models\Customer;
 use Modules\Customers\Models\CustomerGroup;
 use Modules\Customers\Services\CustomerGroupService;
+use Modules\Expenses\Models\ExpenseCategory;
+use Modules\Expenses\Services\ExpenseService;
 use Modules\Products\Models\Product;
 use Modules\Purchases\Services\PurchaseService;
+use Modules\Sales\DTOs\FinalizeSaleDTO;
+use Modules\Sales\Services\SaleService;
 use Modules\Settings\Services\SettingsService;
 use Modules\Suppliers\Models\Supplier;
 use Modules\Tenancy\Models\Branch;
@@ -43,6 +49,7 @@ class MagarMasuPasalSeeder extends Seeder
 
         app(SettingsService::class)->applyBusinessTypeDefaults($business->id, $businessType->default_config);
         app(CustomerGroupService::class)->applyBusinessTypeDefaults($business->id, $businessType->default_config);
+        app(ChartOfAccountsService::class)->seedDefaults($business->id);
 
         $branch = Branch::updateOrCreate(
             ['business_id' => $business->id, 'name' => 'Halchowk'],
@@ -84,11 +91,29 @@ class MagarMasuPasalSeeder extends Seeder
             }
         }
 
+        $this->seedOpeningCapital($business, $branch, $owner);
         $this->seedCustomers($business);
-        $this->seedCatalogAndFirstPurchase($business, $branch, $owner);
+        $created = $this->seedCatalogAndFirstPurchase($business, $branch, $owner);
+        $this->seedExpenses($business, $branch, $owner);
+        $this->seedDemoSale($business, $branch, $terminal, $owner, $created['Chicken Boneless']);
 
         $this->command?->info("POS terminal ready: /pos/terminals/{$terminal->public_id}");
         $this->command?->info("Customer display ready: /display/terminals/{$terminal->public_id}");
+    }
+
+    private function seedOpeningCapital(Business $business, Branch $branch, User $owner): void
+    {
+        app(JournalEntryService::class)->post(
+            businessId: $business->id,
+            branchId: $branch->id,
+            description: "Owner's opening capital",
+            entryDate: now()->subDays(30)->toDateString(),
+            lines: [
+                ['account_code' => ChartOfAccountsService::BANK, 'debit' => 100000],
+                ['account_code' => ChartOfAccountsService::OWNERS_EQUITY, 'credit' => 100000],
+            ],
+            createdBy: $owner->id,
+        );
     }
 
     private function seedCustomers(Business $business): void
@@ -107,7 +132,53 @@ class MagarMasuPasalSeeder extends Seeder
         );
     }
 
-    private function seedCatalogAndFirstPurchase(Business $business, Branch $branch, User $owner): void
+    private function seedExpenses(Business $business, Branch $branch, User $owner): void
+    {
+        $rent = ExpenseCategory::updateOrCreate(['business_id' => $business->id, 'name' => 'Rent']);
+        $utilities = ExpenseCategory::updateOrCreate(['business_id' => $business->id, 'name' => 'Utilities']);
+
+        $expenseService = app(ExpenseService::class);
+
+        $expenseService->record([
+            'business_id' => $business->id,
+            'branch_id' => $branch->id,
+            'expense_category_id' => $rent->id,
+            'amount' => 25000,
+            'paid_via' => 'bank',
+            'vendor' => 'Halchowk Landlord',
+            'expense_date' => now()->startOfMonth()->toDateString(),
+            'created_by' => $owner->id,
+        ]);
+
+        $expenseService->record([
+            'business_id' => $business->id,
+            'branch_id' => $branch->id,
+            'expense_category_id' => $utilities->id,
+            'amount' => 3200,
+            'paid_via' => 'cash',
+            'vendor' => 'Nepal Electricity Authority',
+            'expense_date' => now()->toDateString(),
+            'created_by' => $owner->id,
+        ]);
+    }
+
+    private function seedDemoSale(Business $business, Branch $branch, BranchTerminal $terminal, User $owner, Product $chicken): void
+    {
+        app(SaleService::class)->finalize(new FinalizeSaleDTO(
+            businessId: $business->id,
+            branchId: $branch->id,
+            terminalId: $terminal->id,
+            cashierId: $owner->id,
+            items: [
+                ['product_id' => $chicken->id, 'quantity' => 1.5, 'unit_price' => (float) $chicken->selling_price],
+            ],
+            payments: [
+                ['gateway_key' => 'cash', 'amount' => round(1.5 * (float) $chicken->selling_price, 2)],
+            ],
+        ));
+    }
+
+    private function seedCatalogAndFirstPurchase(Business $business, Branch $branch, User $owner): array
     {
         $categories = collect(['Chicken', 'Mutton', 'Buff', 'Vegetables'])
             ->mapWithKeys(fn (string $name) => [$name => Category::updateOrCreate(
@@ -179,5 +250,7 @@ class MagarMasuPasalSeeder extends Seeder
             'batch_number' => 'B-' . str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT),
             'expiry_date' => now()->addDays(4)->toDateString(),
         ])->all());
+
+        return $created;
     }
 }

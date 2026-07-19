@@ -4,6 +4,7 @@ namespace Tests\Feature\Purchases;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Accounting\Services\ChartOfAccountsService;
 use Modules\Inventory\Models\InventoryStock;
 use Modules\Inventory\Models\StockMovement;
 use Modules\Products\Models\Product;
@@ -28,6 +29,7 @@ class GoodsReceiptTest extends TestCase
     {
         $branch = BranchFactory::new()->create();
         $businessId = $branch->business_id;
+        app(ChartOfAccountsService::class)->seedDefaults($businessId);
 
         $unit = Unit::create(['name' => 'Kilogram', 'symbol' => 'kg', 'conversion_factor' => 1]);
         $product = Product::create([
@@ -76,6 +78,7 @@ class GoodsReceiptTest extends TestCase
     {
         $branch = BranchFactory::new()->create();
         $businessId = $branch->business_id;
+        app(ChartOfAccountsService::class)->seedDefaults($businessId);
 
         $unit = Unit::create(['name' => 'Kilogram', 'symbol' => 'kg', 'conversion_factor' => 1]);
         $product = Product::create([

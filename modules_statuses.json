@@ -15,5 +15,7 @@
     "CashRegister": true,
     "Sales": true,
     "POS": true,
-    "CustomerDisplay": true
+    "CustomerDisplay": true,
+    "Expenses": true,
+    "Accounting": true
 }
