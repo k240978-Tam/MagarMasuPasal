@@ -119,7 +119,64 @@ API, enforced at the WebSocket layer too.
 
 ## 6.5 API Documentation
 
-OpenAPI 3.1 spec generated from route/FormRequest/Resource annotations
-(`dedoc/scramble` or `knuckleswtf/scribe` — evaluated at implementation time), published at
-`/api/documentation`, kept in sync via CI check (spec regenerated and diffed on every PR that
-touches `app/Modules/*/Http`).
+**As implemented (Phase 7):** hand-written OpenAPI 3.1 spec at [`docs/openapi.yaml`](../openapi.yaml),
+covering the endpoints actually built — auth (login/logout/me), dashboard summary, products
+(list/show/barcode), sales (list/show), reports/sales, notifications (list/mark-read),
+customers (list/dues), and the POS finalize-sale endpoint. This is deliberately the
+representative subset from §6.2, not every endpoint listed there.
+
+Auto-generation from route/FormRequest annotations (`dedoc/scramble` or `knuckleswtf/scribe`)
+was the original plan but wasn't used for this pass — pulled in as a dev dependency it would
+hit the same GitHub-package-download restriction that blocked Larastan in Phase 6's CI work,
+so hand-writing the spec was the reliable path. Worth revisiting once that's no longer a
+constraint, so the spec is generated from source and can't drift from the routes it documents.
+
+## 6.6 Versioning & Deprecation Policy
+
+- **URL-versioned, not header-versioned:** `/api/v1/...` today; a breaking change ships as a
+  new `/api/v2/...` prefix, never an in-place change to `v1`'s request/response shape. Additive,
+  backward-compatible changes (a new optional field, a new endpoint) land in `v1` directly — no
+  version bump needed for those.
+- **What counts as breaking:** removing/renaming a field, changing a field's type or meaning,
+  removing an endpoint, tightening validation on an existing field, changing an error's status
+  code. Not breaking: adding a field, adding an endpoint, loosening validation, adding an
+  optional query parameter.
+- **Deprecation window:** once `v2` ships, `v1` is kept fully functional for a minimum of 6
+  months, with `Sunset` and `Deprecation` response headers (RFC 8594 style) added to every `v1`
+  response during that window so integrators get advance, machine-readable notice rather than a
+  changelog they have to go read.
+- **One tenant, one deployment:** because every business shares the same platform deployment
+  (no per-tenant version pinning), a `v1` retirement date is announced to every Owner with an
+  active API token (via the in-app Notification system this same phase built) at the start of
+  the deprecation window, not just at cutover.
+- **This spec's version tracks API compatibility, not release cadence** — `docs/openapi.yaml`'s
+  `info.version` bumps only when `v1`'s contract changes, not on every deploy.
+
+## 6.7 Index Review & Basic Load Check (Phase 7)
+
+**Index review:** every `*_items`/`*_lines` line-item table was checked for indexes beyond its
+primary key. `journal_entry_lines` already had `(business_id, account_id)`. Five tables had
+none at all — a MySQL foreign key auto-indexes its own column, but SQLite doesn't, and neither
+gives the composite `(business_id, <fk>)` pattern the app's actual queries need (e.g. Reports'
+`GROUP BY product_id` within a business, or listing a document's lines). Added via dedicated
+`add_indexes_to_*_table` migrations rather than editing the original create-table migrations:
+
+| Table | Indexes added |
+|---|---|
+| `sale_items` | `(business_id, sale_id)`, `(business_id, product_id)` |
+| `purchase_order_items` | `(business_id, purchase_order_id)`, `(business_id, product_id)` |
+| `sale_return_items` | `(business_id, sale_return_id)`, `(business_id, sale_item_id)` |
+| `stock_adjustment_items` | `(business_id, stock_adjustment_id)`, `(business_id, product_id)` |
+| `stock_transfer_items` | `(business_id, stock_transfer_id)`, `(business_id, product_id)` |
+
+`stock_movements`, `audit_logs`, `sales`, `notifications`, `purchase_batches`, and
+`personal_access_tokens` were reviewed and already carry adequate composite indexes.
+
+**Basic load check:** a modest smoke test (20 concurrent `curl` requests against
+`GET /api/v1/dashboard/summary` and `GET /api/v1/products`, authenticated via a real Sanctum
+token) returned all `200`s with no errors, timeouts, or tenant-scope leaks. This is explicitly
+**not** a production load test — it ran against `php artisan serve`, which is single-threaded
+and serializes requests, against a near-empty SQLite dataset. It's a sanity check that the new
+v1 endpoints don't error or hang under light concurrency, not a capacity or throughput
+benchmark. A real load test belongs in a staging environment behind PHP-FPM/Octane and MySQL,
+once one exists.

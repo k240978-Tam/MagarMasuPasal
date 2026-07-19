@@ -44,6 +44,7 @@
                     @endcan
                     @can('business.manage')
                         <a href="{{ route('backups.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('backups.*') ? 'bg-surface-2 text-ink' : '' }}">Backups</a>
+                        <a href="{{ route('api-tokens.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('api-tokens.*') ? 'bg-surface-2 text-ink' : '' }}">API Tokens</a>
                     @endcan
                 </nav>
 

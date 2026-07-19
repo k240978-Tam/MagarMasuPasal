@@ -44,5 +44,10 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', fn ($request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 
         RateLimiter::for('pos-checkout', fn ($request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
+
+        // A dedicated, higher-ceiling bucket for the mobile POS API — see
+        // docs/architecture/06-api-design.md §6.1: active selling needs a
+        // much higher request rate than the general 60/min `api` limiter.
+        RateLimiter::for('pos-api', fn ($request) => Limit::perMinute(120)->by($request->user()?->id ?: $request->ip()));
     }
 }

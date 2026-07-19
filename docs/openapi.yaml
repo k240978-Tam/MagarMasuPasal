@@ -1,0 +1,302 @@
+openapi: 3.1.0
+info:
+  title: Retail ERP API
+  version: "1.0"
+  description: >
+    The public v1 REST API for the Retail ERP platform — see
+    docs/architecture/06-api-design.md for conventions and the full endpoint
+    catalog (this spec covers the subset actually implemented so far; §6.2
+    of that doc lists the representative-not-exhaustive future surface).
+    Every response uses the `{data, meta, links}` envelope. Every
+    tenant-scoped resource is derived from the authenticated token's
+    business — there is no way to pass a business/tenant ID as a parameter.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      summary: Exchange credentials for a personal access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, device_name]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+                device_name: { type: string, description: "Identifies the client, e.g. 'iPhone 15'" }
+                two_factor_code: { type: string, description: "Required only if the account has 2FA enabled — see the 428 response." }
+      responses:
+        '201':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token: { type: string }
+                      token_type: { type: string, example: Bearer }
+                      user: { $ref: '#/components/schemas/User' }
+        '401': { description: Invalid credentials or two-factor code }
+        '428': { description: A two-factor code is required but was not supplied }
+  /auth/logout:
+    post:
+      summary: Revoke the current token
+      responses:
+        '200': { description: Logged out }
+  /auth/me:
+    get:
+      summary: The authenticated user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/User' }
+
+  /dashboard/summary:
+    get:
+      summary: Role-aware dashboard summary (today's sales, trend, low stock, ...)
+      responses:
+        '200': { description: OK }
+
+  /products:
+    get:
+      summary: List active products for the authenticated business
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Filter by name
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 25 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Product' }
+                  meta: { $ref: '#/components/schemas/PageMeta' }
+  /products/{product}:
+    get:
+      summary: A single product by public_id
+      parameters:
+        - name: product
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+        '404': { description: "Not found — including a product belonging to another business" }
+  /products/barcode/{code}:
+    get:
+      summary: Look up a product by barcode
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+        '404': { description: No product with that barcode in this business }
+
+  /sales:
+    get:
+      summary: List completed sales
+      parameters:
+        - name: branch_id
+          in: query
+          schema: { type: integer }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200': { description: OK }
+  /sales/{sale}:
+    get:
+      summary: A single sale with line items and payments
+      parameters:
+        - name: sale
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+        '404': { description: "Not found — including a sale belonging to another business" }
+
+  /reports/sales:
+    get:
+      summary: Sales report totals, top products, and category breakdown for a date range
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: branch_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+
+  /notifications:
+    get:
+      summary: The authenticated user's notifications
+      responses:
+        '200': { description: OK }
+  /notifications/{id}/read:
+    patch:
+      summary: Mark a notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+
+  /customers:
+    get:
+      summary: List customers
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+  /customers/{customer}/dues:
+    get:
+      summary: A customer's credit due and remaining credit limit
+      parameters:
+        - name: customer
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+
+  /pos/terminals/{terminal}/sales:
+    post:
+      summary: Finalize a sale from a client-built cart (mobile POS)
+      description: >
+        Prices and tax are always recomputed server-side from current
+        Product/TaxRule data — the request only ever supplies product_id and
+        quantity per line, never a price. Requires an Idempotency-Key header;
+        retrying the same key returns the original response instead of
+        creating a second sale.
+      parameters:
+        - name: terminal
+          in: path
+          required: true
+          schema: { type: string }
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string }
+          description: A client-generated unique key (a ULID is recommended) per logical sale attempt.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sale_type, items]
+              properties:
+                sale_type: { type: string, enum: [retail, credit] }
+                customer_id: { type: integer, nullable: true }
+                discount_percent: { type: number, minimum: 0, maximum: 100 }
+                notes: { type: string }
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [product_id, quantity]
+                    properties:
+                      product_id: { type: integer }
+                      quantity: { type: number, exclusiveMinimum: 0 }
+                payments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      gateway_key: { type: string, example: cash }
+                      amount: { type: number }
+      responses:
+        '201': { description: Sale finalized (or the original response, if this Idempotency-Key was already used) }
+        '400': { description: Missing Idempotency-Key header }
+        '403': { description: The authenticated user lacks pos.operate }
+        '404': { description: "Terminal not found — including a terminal belonging to another business" }
+        '422': { description: Validation failed, or payment total is short }
+        '429': { description: "Rate limited — see the pos-api limiter (120/min/user)" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: A Sanctum personal access token from POST /auth/login or the Owner's API Tokens page.
+  schemas:
+    User:
+      type: object
+      properties:
+        public_id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        business_id: { type: integer }
+        default_branch_id: { type: integer, nullable: true }
+        roles:
+          type: array
+          items: { type: string }
+    Product:
+      type: object
+      properties:
+        public_id: { type: string }
+        name: { type: string }
+        sku: { type: string, nullable: true }
+        barcode: { type: string, nullable: true }
+        unit_symbol: { type: string }
+        sell_by_weight: { type: boolean }
+        selling_price: { type: number }
+        status: { type: string }
+    PageMeta:
+      type: object
+      properties:
+        total: { type: integer }
+        per_page: { type: integer }
+        current_page: { type: integer }
+
+  responses:
+    Unauthorized:
+      description: Missing, invalid, or revoked token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  message: { type: string }

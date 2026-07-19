@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\UserManagement\Http\Controllers\ApiTokenController;
 use Modules\UserManagement\Http\Controllers\Auth\LoginController;
 use Modules\UserManagement\Http\Controllers\Auth\TwoFactorChallengeController;
 use Modules\UserManagement\Http\Controllers\TwoFactorController;
@@ -23,5 +24,11 @@ Route::middleware('auth')->group(function () {
         Route::post('confirm', [TwoFactorController::class, 'confirm'])->name('confirm');
         Route::delete('/', [TwoFactorController::class, 'disable'])->name('disable');
         Route::post('recovery-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('recovery-codes');
+    });
+
+    Route::middleware('can:business.manage')->prefix('account/api-tokens')->name('api-tokens.')->group(function () {
+        Route::get('/', [ApiTokenController::class, 'index'])->name('index');
+        Route::post('/', [ApiTokenController::class, 'store'])->name('store');
+        Route::delete('{token}', [ApiTokenController::class, 'destroy'])->name('destroy');
     });
 });
