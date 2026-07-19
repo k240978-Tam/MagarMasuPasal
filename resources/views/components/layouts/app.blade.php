@@ -61,10 +61,10 @@
                         <span x-show="theme === 'dark'">☀️</span>
                     </button>
 
-                    <div class="text-right leading-tight">
+                    <a href="{{ route('two-factor.show') }}" class="text-right leading-tight hover:opacity-80" title="Account security">
                         <div class="text-sm font-medium text-ink">{{ auth()->user()->name }}</div>
                         <div class="text-xs text-ink-soft">{{ auth()->user()->getRoleNames()->first() ?? 'Staff' }}</div>
-                    </div>
+                    </a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

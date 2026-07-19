@@ -68,6 +68,10 @@ class ReceiptTest extends TestCase
         $sale = $this->makeSale($branchA->business_id, $branchA->id);
         $otherUser = User::factory()->create(['business_id' => $branchB->business_id]);
 
-        $this->actingAs($otherUser)->get("/sales/{$sale->public_id}/receipt")->assertForbidden();
+        // 404, not 403: TenantScope filters the cross-tenant sale out of
+        // route-model binding before the controller's own abort_unless
+        // check ever runs — the more secure outcome, since it doesn't even
+        // confirm the sale exists.
+        $this->actingAs($otherUser)->get("/sales/{$sale->public_id}/receipt")->assertNotFound();
     }
 }

@@ -6,6 +6,7 @@ use App\Support\Tenancy\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\Tenancy\Database\Factories\BranchFactory;
 use Modules\Tenancy\Models\Branch;
+use Modules\Units\Models\Unit;
 use Tests\TestCase;
 
 /**
@@ -57,5 +58,31 @@ class TenantIsolationTest extends TestCase
         ]);
 
         $this->assertSame($branch->business_id, $created->business_id);
+    }
+
+    /**
+     * Unit predates BelongsToTenant's strict-equality model — null business_id
+     * means "shared platform default" here, not "belongs to no one" — so it
+     * needs its own scope. Found while writing the Phase 6 tenant-isolation
+     * sweep: Unit had a business_id column but no scope enforcing it at all,
+     * meaning a plain `Unit::all()` leaked every tenant's custom units to
+     * every other tenant.
+     */
+    public function test_units_shows_shared_defaults_plus_only_the_current_tenants_own_custom_units(): void
+    {
+        $branchA = BranchFactory::new()->create();
+        $branchB = BranchFactory::new()->create();
+
+        Unit::create(['business_id' => null, 'name' => 'Kilogram', 'symbol' => 'kg']);
+        Unit::create(['business_id' => $branchA->business_id, 'name' => "A's Crate", 'symbol' => 'crate-a']);
+        Unit::create(['business_id' => $branchB->business_id, 'name' => "B's Sack", 'symbol' => 'sack-b']);
+
+        app(TenantContext::class)->setBusinessId($branchA->business_id);
+
+        $visible = Unit::pluck('symbol')->all();
+
+        $this->assertContains('kg', $visible, 'Shared platform defaults must remain visible.');
+        $this->assertContains('crate-a', $visible, 'Tenant A must see its own custom unit.');
+        $this->assertNotContains('sack-b', $visible, "Tenant A must never see tenant B's custom unit.");
     }
 }

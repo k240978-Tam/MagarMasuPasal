@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Modules\Accounting\Services\ChartOfAccountsService;
+use Modules\Customers\Models\Customer;
+use Modules\Customers\Models\CustomerGroup;
 use Modules\Inventory\Models\InventoryStock;
 use Modules\POS\Events\TerminalStateUpdated;
 use Modules\Products\Models\Product;
@@ -111,10 +113,10 @@ class CheckoutFlowTest extends TestCase
         $cashier = User::factory()->create(['business_id' => $businessId, 'default_branch_id' => $branch->id]);
         $cashier->assignRole($role);
 
-        $customerGroup = \Modules\Customers\Models\CustomerGroup::create([
+        $customerGroup = CustomerGroup::create([
             'business_id' => $businessId, 'name' => 'Credit', 'allow_credit' => true, 'credit_limit' => 5000,
         ]);
-        $customer = \Modules\Customers\Models\Customer::create([
+        $customer = Customer::create([
             'business_id' => $businessId, 'customer_group_id' => $customerGroup->id, 'name' => 'Hotel Everest',
         ]);
 

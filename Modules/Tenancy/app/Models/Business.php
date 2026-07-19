@@ -25,6 +25,12 @@ class Business extends Model
         'status',
     ];
 
+    protected $casts = [
+        // Nepal's PAN/VAT registration number — a government tax ID never
+        // looked up by WHERE clause, so encrypting it costs nothing.
+        'pan_vat_number' => 'encrypted',
+    ];
+
     public function businessType()
     {
         return $this->belongsTo(BusinessType::class);

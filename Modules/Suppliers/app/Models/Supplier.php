@@ -27,8 +27,9 @@ class Supplier extends Model
 
     protected $casts = [
         'bank_details' => 'encrypted',
+        'pan_vat_number' => 'encrypted',
         'current_due' => 'decimal:2',
     ];
 
-    protected array $auditExcept = ['bank_details'];
+    protected array $auditExcept = ['bank_details', 'pan_vat_number'];
 }

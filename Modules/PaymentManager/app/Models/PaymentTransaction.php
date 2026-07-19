@@ -25,7 +25,10 @@ class PaymentTransaction extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'meta' => 'array',
+        // `array`, not just `encrypted` — meta will eventually hold real
+        // gateway references/tokens (eSewa/Khalti) once those ship; never
+        // queried by WHERE clause, so encrypting it at rest costs nothing now.
+        'meta' => 'encrypted:array',
         'processed_at' => 'datetime',
     ];
 

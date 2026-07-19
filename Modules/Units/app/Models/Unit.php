@@ -2,16 +2,17 @@
 
 namespace Modules\Units\Models;
 
-use App\Support\Tenancy\TenantContext;
+use App\Support\Tenancy\SharedOrTenantScope;
 use Illuminate\Database\Eloquent\Model;
 use Modules\AuditLog\Traits\Auditable;
 
 /**
  * Units are special-cased relative to BelongsToTenant: a row with
  * business_id = null is a platform default visible to every tenant, while
- * a non-null business_id is one tenant's own custom unit. Queries therefore
- * use scopeForCurrentTenant() (defaults + this tenant's own) rather than the
- * strict equality global scope every other tenant-owned table uses.
+ * a non-null business_id is one tenant's own custom unit. SharedOrTenantScope
+ * enforces this automatically on every query (defaults + this tenant's own),
+ * the same way TenantScope does for every other tenant-owned table — so a
+ * plain `Unit::all()` can never leak another business's custom units.
  */
 class Unit extends Model
 {
@@ -29,17 +30,14 @@ class Unit extends Model
         'conversion_factor' => 'decimal:6',
     ];
 
-    public function scopeForCurrentTenant($query)
+    protected static function booted(): void
     {
-        $businessId = app(TenantContext::class)->businessId();
+        static::addGlobalScope(new SharedOrTenantScope);
+    }
 
-        return $query->where(function ($q) use ($businessId) {
-            $q->whereNull('business_id');
-
-            if ($businessId) {
-                $q->orWhere('business_id', $businessId);
-            }
-        });
+    public function scopeWithoutTenantScope($query)
+    {
+        return $query->withoutGlobalScope(SharedOrTenantScope::class);
     }
 
     public function baseUnit()

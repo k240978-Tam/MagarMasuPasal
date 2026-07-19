@@ -18,16 +18,31 @@ class LoginController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->validated();
+        $remember = $request->boolean('remember');
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, $remember)) {
             return back()->withErrors([
                 'email' => 'These credentials do not match our records.',
             ])->onlyInput('email');
         }
 
+        $user = Auth::user();
+
+        if ($user->two_factor_confirmed_at) {
+            // The password check just above already fully logged the user
+            // in (and fired the Login event) — step back out immediately so
+            // a stolen password alone can never reach an authenticated
+            // session, only the challenge screen.
+            Auth::logout();
+            $request->session()->regenerate();
+            $request->session()->put('two_factor.pending_user_id', $user->id);
+            $request->session()->put('two_factor.remember', $remember);
+
+            return redirect()->route('two-factor.challenge');
+        }
+
         $request->session()->regenerate();
 
-        $user = Auth::user();
         $user->forceFill([
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),

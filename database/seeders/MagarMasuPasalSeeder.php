@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use Modules\Accounting\Services\ChartOfAccountsService;
 use Modules\Accounting\Services\JournalEntryService;
 use Modules\Categories\Models\Category;
@@ -182,7 +183,7 @@ class MagarMasuPasalSeeder extends Seeder
     {
         $categories = collect(['Chicken', 'Mutton', 'Buff', 'Vegetables'])
             ->mapWithKeys(fn (string $name) => [$name => Category::updateOrCreate(
-                ['business_id' => $business->id, 'slug' => \Illuminate\Support\Str::slug($name)],
+                ['business_id' => $business->id, 'slug' => Str::slug($name)],
                 ['name' => $name],
             )]);
 
@@ -220,7 +221,7 @@ class MagarMasuPasalSeeder extends Seeder
 
         $supplier = Supplier::updateOrCreate(
             ['business_id' => $business->id, 'name' => 'Kalimati Traders'],
-            ['contact_person' => 'Hari Bahadur', 'phone' => '98410000' . rand(10, 99), 'status' => 'active'],
+            ['contact_person' => 'Hari Bahadur', 'phone' => '98410000'.rand(10, 99), 'status' => 'active'],
         );
 
         $purchaseService = app(PurchaseService::class);
@@ -247,7 +248,7 @@ class MagarMasuPasalSeeder extends Seeder
             'purchase_order_item_id' => $item->id,
             'quantity' => $products[$index]['stock'],
             'unit_cost' => $products[$index]['cost'],
-            'batch_number' => 'B-' . str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT),
+            'batch_number' => 'B-'.str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT),
             'expiry_date' => now()->addDays(4)->toDateString(),
         ])->all());
 

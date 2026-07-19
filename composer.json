@@ -13,12 +13,14 @@
         "laravel/sanctum": "*",
         "laravel/tinker": "^2.10.1",
         "nwidart/laravel-modules": "*",
+        "pragmarx/google2fa": "^9.0",
         "simplesoftwareio/simple-qrcode": "*",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.10",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",

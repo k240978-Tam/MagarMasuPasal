@@ -17,6 +17,6 @@ Route::middleware('auth')->prefix('pos/terminals/{terminal:public_id}')->group(f
     Route::post('cart/hold', [CartController::class, 'hold'])->name('pos.cart.hold');
     Route::get('held-bills', [CartController::class, 'heldBills'])->name('pos.heldbills.index');
     Route::post('cart/resume/{heldBill}', [CartController::class, 'resume'])->name('pos.cart.resume');
-    Route::post('cart/checkout', [CartController::class, 'checkout'])->name('pos.cart.checkout');
+    Route::post('cart/checkout', [CartController::class, 'checkout'])->middleware('throttle:pos-checkout')->name('pos.cart.checkout');
     Route::post('cart/complete', [CartController::class, 'complete'])->name('pos.cart.complete');
 });
