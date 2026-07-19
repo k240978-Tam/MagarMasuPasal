@@ -1,0 +1,7 @@
+{
+    "Tenancy": true,
+    "UserManagement": true,
+    "Settings": true,
+    "AuditLog": true,
+    "Notification": true
+}

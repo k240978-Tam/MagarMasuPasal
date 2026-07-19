@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../Modules/**/*.blade.php';
+@source '../../Modules/**/*.js';
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+    --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Retail ERP palette — marigold accent on a sage-neutral ground (see docs/architecture) */
+    --color-bg: #f4f5f1;
+    --color-surface: #ffffff;
+    --color-surface-2: #fbfbf9;
+    --color-ink: #1c231f;
+    --color-ink-soft: #5c6660;
+    --color-line: #e1e4dd;
+    --color-line-strong: #cbd0c6;
+    --color-accent: #d9890f;
+    --color-accent-ink: #241300;
+    --color-accent-soft: #f6e2c2;
+    --color-success: #2f8f5b;
+    --color-warning: #b8860b;
+    --color-critical: #b33a2e;
+    --color-info: #3b6fa0;
+}
+
+[data-theme='dark'] {
+    --color-bg: #161b17;
+    --color-surface: #1e241f;
+    --color-surface-2: #232a23;
+    --color-ink: #ecefe9;
+    --color-ink-soft: #a5afa6;
+    --color-line: #2b332b;
+    --color-line-strong: #39433a;
+    --color-accent: #e39a2a;
+    --color-accent-ink: #241300;
+    --color-accent-soft: #3a2c10;
+    --color-success: #3fa873;
+    --color-warning: #d0a02a;
+    --color-critical: #d85a4a;
+    --color-info: #5b8fc7;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+}
