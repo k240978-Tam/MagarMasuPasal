@@ -1,0 +1,440 @@
+<title>Screen Wireframes — Retail ERP for Nepal</title>
+<style>
+  :root{
+    --bg:#F4F5F1; --surface:#FFFFFF; --surface-2:#FBFBF9;
+    --ink:#1C231F; --ink-soft:#5C6660; --line:#E1E4DD; --line-strong:#CBD0C6;
+    --accent:#D9890F; --accent-ink:#241300; --accent-soft:#F6E2C2;
+    --success:#2F8F5B; --warning:#B8860B; --critical:#B33A2E; --info:#3B6FA0;
+    --shadow: 0 1px 2px rgba(28,35,31,.06), 0 8px 24px -12px rgba(28,35,31,.18);
+    --radius: 10px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#161B17; --surface:#1E241F; --surface-2:#232A23;
+      --ink:#ECEFE9; --ink-soft:#A5AFA6; --line:#2B332B; --line-strong:#39433A;
+      --accent:#E39A2A; --accent-ink:#241300; --accent-soft:#3A2C10;
+      --success:#3FA873; --warning:#D0A02A; --critical:#D85A4A; --info:#5B8FC7;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#161B17; --surface:#1E241F; --surface-2:#232A23;
+    --ink:#ECEFE9; --ink-soft:#A5AFA6; --line:#2B332B; --line-strong:#39433A;
+    --accent:#E39A2A; --accent-ink:#241300; --accent-soft:#3A2C10;
+    --success:#3FA873; --warning:#D0A02A; --critical:#D85A4A; --info:#5B8FC7;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#F4F5F1; --surface:#FFFFFF; --surface-2:#FBFBF9;
+    --ink:#1C231F; --ink-soft:#5C6660; --line:#E1E4DD; --line-strong:#CBD0C6;
+    --accent:#D9890F; --accent-ink:#241300; --accent-soft:#F6E2C2;
+    --success:#2F8F5B; --warning:#B8860B; --critical:#B33A2E; --info:#3B6FA0;
+    --shadow: 0 1px 2px rgba(28,35,31,.06), 0 8px 24px -12px rgba(28,35,31,.18);
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing:antialiased;
+    padding: 40px 24px 96px;
+  }
+  .num{ font-variant-numeric: tabular-nums; }
+
+  .wrap{ max-width: 1180px; margin: 0 auto; }
+
+  .page-head{ max-width: 700px; margin-bottom: 40px; }
+  .eyebrow{
+    display:inline-block; font-size:12px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:12px;
+  }
+  h1{
+    font-size: clamp(28px, 4vw, 38px); line-height:1.1; margin: 0 0 12px;
+    font-weight:700; letter-spacing:-.01em; text-wrap:balance;
+  }
+  .dek{ color:var(--ink-soft); font-size:16px; line-height:1.6; margin:0; max-width:62ch; }
+
+  /* Tabs (CSS-only, radio-driven) */
+  .tabset input[type="radio"]{ position:absolute; opacity:0; pointer-events:none; }
+  .tab-bar{
+    display:inline-flex; gap:2px; padding:4px; background:var(--surface-2);
+    border:1px solid var(--line); border-radius: 999px; margin-bottom: 28px;
+  }
+  .tab-bar label{
+    padding: 9px 18px; border-radius:999px; font-size:14px; font-weight:600;
+    color:var(--ink-soft); cursor:pointer; user-select:none;
+    transition: background .15s ease, color .15s ease;
+  }
+  .tab-bar label:hover{ color:var(--ink); }
+  #tab-pos:checked ~ .tab-bar label[for="tab-pos"],
+  #tab-cd:checked ~ .tab-bar label[for="tab-cd"],
+  #tab-dash:checked ~ .tab-bar label[for="tab-dash"]{
+    background:var(--ink); color:var(--bg);
+  }
+
+  .panel{ display:none; }
+  #tab-pos:checked ~ .panels .panel-pos{ display:grid; }
+  #tab-cd:checked ~ .panels .panel-cd{ display:grid; }
+  #tab-dash:checked ~ .panels .panel-dash{ display:grid; }
+
+  .panel{
+    grid-template-columns: minmax(0,1fr) 260px;
+    gap: 28px; align-items:start;
+  }
+  @media (max-width: 860px){ .panel{ grid-template-columns: 1fr; } }
+
+  .frame-shell{
+    background:var(--surface-2); border:1px solid var(--line); border-radius: 18px;
+    padding: 22px; box-shadow: var(--shadow);
+  }
+  .frame-label{
+    font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft); margin: 0 0 12px 2px;
+  }
+
+  .notes{
+    background:var(--surface); border:1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .notes h3{ margin:0 0 10px; font-size:13px; font-weight:700; letter-spacing:.02em; }
+  .notes ul{ margin:0; padding-left: 18px; display:flex; flex-direction:column; gap:9px; }
+  .notes li{ font-size:13.5px; line-height:1.55; color:var(--ink-soft); }
+  .notes li b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- POS mockup ---------- */
+  .pos-app{
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:12px;
+    overflow:hidden; font-size:14px;
+  }
+  .pos-topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 16px; border-bottom:1px solid var(--line); background:var(--surface);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:700; }
+  .brand .mark{
+    width:28px;height:28px;border-radius:8px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;color:var(--accent-ink);font-size:15px;
+  }
+  .topbar-meta{ display:flex; gap:16px; font-size:12.5px; color:var(--ink-soft); }
+  .topbar-icons{ display:flex; gap:10px; color:var(--ink-soft); font-size:15px; }
+
+  .pos-body{ display:grid; grid-template-columns: 1fr 300px; min-height: 420px; }
+  @media (max-width: 620px){ .pos-body{ grid-template-columns: 1fr; } }
+  .pos-catalog{ padding:14px 16px; border-right:1px solid var(--line); }
+  .search-row{ display:flex; gap:8px; margin-bottom:12px; }
+  .search-input{
+    flex:1; display:flex; align-items:center; gap:8px; padding:9px 12px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:9px;
+    color:var(--ink-soft); font-size:13px;
+  }
+  .scan-btn{
+    width:38px; display:flex; align-items:center; justify-content:center;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:9px;
+  }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+  .chip{
+    padding:5px 12px; border-radius:999px; font-size:12px; font-weight:600;
+    border:1px solid var(--line); color:var(--ink-soft);
+  }
+  .chip.active{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .product-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; }
+  @media (max-width: 480px){ .product-grid{ grid-template-columns: repeat(2,1fr);} }
+  .product-card{
+    border:1px solid var(--line); border-radius:10px; padding:10px; text-align:left;
+    background:var(--surface); display:flex; flex-direction:column; gap:6px;
+  }
+  .product-swatch{
+    height:44px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .product-card .pname{ font-weight:600; font-size:12.5px; }
+  .product-card .pprice{ font-size:11.5px; color:var(--ink-soft); }
+
+  .pos-cart{ padding:14px 16px; display:flex; flex-direction:column; gap:10px; background:var(--surface-2); }
+  .cart-head{ display:flex; justify-content:space-between; align-items:center; }
+  .cart-head b{ font-size:13px; }
+  .hold-btn{ font-size:11px; font-weight:700; color:var(--info); }
+  .cart-item{ background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:9px 10px; }
+  .cart-item-top{ display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; }
+  .cart-item-sub{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); margin-top:3px;}
+  .cart-cust{ display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-soft); }
+  .totals{ border-top:1px dashed var(--line-strong); padding-top:10px; display:flex; flex-direction:column; gap:5px; }
+  .totals .row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); }
+  .totals .row.grand{ font-size:16px; font-weight:700; color:var(--ink); padding-top:4px; }
+  .pay-row{ display:flex; gap:6px; }
+  .pay-btn{ flex:1; text-align:center; padding:8px 4px; border-radius:8px; border:1px solid var(--line); font-size:11px; font-weight:600; background:var(--surface); }
+  .charge-btn{
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:9px;
+    padding:12px; font-weight:700; font-size:13.5px; text-align:center;
+  }
+  .pos-footer{
+    display:flex; gap:14px; padding:9px 16px; border-top:1px solid var(--line);
+    font-size:11px; color:var(--ink-soft); flex-wrap:wrap;
+  }
+  .pos-footer kbd{
+    font-family:inherit; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:4px; padding:1px 5px; font-size:10.5px; margin-right:4px;
+  }
+
+  /* ---------- Customer Display mockup (fixed dark, committed look) ---------- */
+  .cd-screen{
+    background: radial-gradient(120% 140% at 50% -10%, #1c2b22 0%, #0d130f 60%, #090d0a 100%);
+    color:#F4F1E8; border-radius:14px; padding: 28px 30px; font-size:14px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .cd-head{ text-align:center; margin-bottom:18px; }
+  .cd-mark{ width:40px;height:40px;border-radius:10px;background:#E39A2A;color:#241300;
+    display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px; }
+  .cd-name{ font-size:17px; font-weight:700; letter-spacing:.01em; }
+  .cd-meta{ font-size:11.5px; color:#9FAE9F; margin-top:4px; display:flex; gap:12px; justify-content:center; }
+  .cd-table{ border-top:1px solid rgba(255,255,255,.1); border-bottom:1px solid rgba(255,255,255,.1); padding:14px 0; margin:14px 0; display:flex; flex-direction:column; gap:10px; }
+  .cd-row{ display:flex; justify-content:space-between; font-size:13px; }
+  .cd-row .it{ font-weight:600; }
+  .cd-row .sub{ color:#9FAE9F; font-size:11px; }
+  .cd-totalcard{
+    background:rgba(227,154,42,.12); border:1px solid rgba(227,154,42,.4);
+    border-radius:10px; padding:12px; text-align:center; margin-top:10px;
+  }
+  .cd-totalcard .lbl{ font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:#E39A2A; }
+  .cd-totalcard .amt{ font-size:24px; font-weight:700; margin-top:2px; }
+  .cd-status{ text-align:center; margin-top:16px; font-size:12.5px; color:#9FAE9F; }
+  .cd-status b{ color:#7CD9A5; }
+
+  /* ---------- Dashboard mockup ---------- */
+  .dash{ display:flex; flex-direction:column; gap:14px; }
+  .stat-row{ display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+  @media (max-width:620px){ .stat-row{ grid-template-columns: repeat(2,1fr);} }
+  .stat-card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .stat-card .lbl{ font-size:11px; color:var(--ink-soft); }
+  .stat-card .val{ font-size:19px; font-weight:700; margin-top:4px; }
+  .stat-card .val.warn{ color:var(--warning); }
+  .dash-grid{ display:grid; grid-template-columns: 1.3fr 1fr; gap:12px; }
+  @media (max-width:620px){ .dash-grid{ grid-template-columns:1fr; } }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px; }
+  .card h4{ margin:0 0 10px; font-size:12.5px; }
+  .bars{ display:flex; align-items:flex-end; gap:6px; height:80px; }
+  .bar{ flex:1; background:var(--accent-soft); border-radius:4px 4px 0 0; position:relative; }
+  .bar span{ position:absolute; inset:0; background:var(--accent); border-radius:4px 4px 0 0; }
+  .list-row{ display:flex; justify-content:space-between; font-size:12px; padding:6px 0; border-bottom:1px solid var(--line); }
+  .list-row:last-child{ border-bottom:none; }
+  .alert-row{ display:flex; gap:8px; font-size:12px; padding:6px 0; color:var(--ink-soft); align-items:flex-start; }
+  .dot{ width:6px;height:6px;border-radius:50%; margin-top:5px; flex:none; }
+  .dot.warn{ background:var(--warning); }
+  .dot.crit{ background:var(--critical); }
+
+  footer.credit{
+    max-width: 1180px; margin: 48px auto 0; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12px; color:var(--ink-soft);
+  }
+</style>
+
+<div class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">Retail ERP for Nepal — Deliverable 5 of 8</span>
+    <h1>Screen Wireframes</h1>
+    <p class="dek">Static, low-fidelity mockups of the three screens with the tightest design
+      constraints: the Cashier POS (speed, touch, keyboard), the Customer Display
+      (synced in real time over Reverb, zero input), and the role-aware Dashboard. Layout and
+      density shown here — not final visual polish.</p>
+  </div>
+
+  <div class="tabset">
+    <input type="radio" name="tab" id="tab-pos" checked>
+    <input type="radio" name="tab" id="tab-cd">
+    <input type="radio" name="tab" id="tab-dash">
+
+    <div class="tab-bar">
+      <label for="tab-pos">Cashier POS</label>
+      <label for="tab-cd">Customer Display</label>
+      <label for="tab-dash">Dashboard</label>
+    </div>
+
+    <div class="panels">
+
+      <!-- POS -->
+      <section class="panel panel-pos">
+        <div class="frame-shell">
+          <p class="frame-label">Cashier POS — tablet, landscape</p>
+          <div class="pos-app">
+            <div class="pos-topbar">
+              <div class="brand"><span class="mark">M</span> Magar Masu Pasal</div>
+              <div class="topbar-meta">
+                <span>Branch: Halchowk</span><span>Cashier: Sita</span>
+              </div>
+              <div class="topbar-icons">🔔 ⚙ 🌙</div>
+            </div>
+            <div class="pos-body">
+              <div class="pos-catalog">
+                <div class="search-row">
+                  <div class="search-input">🔍 Search or scan barcode…</div>
+                  <div class="scan-btn">📷</div>
+                </div>
+                <div class="chip-row">
+                  <span class="chip active">All</span>
+                  <span class="chip">Chicken</span>
+                  <span class="chip">Mutton</span>
+                  <span class="chip">Buff</span>
+                  <span class="chip">Vegetables</span>
+                  <span class="chip">Spices</span>
+                </div>
+                <div class="product-grid">
+                  <div class="product-card"><div class="product-swatch" style="background:#F6E2C2">🐔</div><div class="pname">Chicken Boneless</div><div class="pprice num">Rs 480 / kg</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#F0DCC9">🐐</div><div class="pname">Mutton Leg</div><div class="pprice num">Rs 1,200 / kg</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#EAD9CF">🐄</div><div class="pname">Buff Boneless</div><div class="pprice num">Rs 650 / kg</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#DCEBD4">🥬</div><div class="pname">Mustard Greens</div><div class="pprice num">Rs 60 / kg</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#F6E2C2">🥚</div><div class="pname">Farm Eggs (dozen)</div><div class="pprice num">Rs 210 / dz</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#EFE3D0">🌿</div><div class="pname">Coriander</div><div class="pprice num">Rs 20 / bunch</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#F0DCC9">🍗</div><div class="pname">Chicken Wings</div><div class="pprice num">Rs 380 / kg</div></div>
+                  <div class="product-card"><div class="product-swatch" style="background:#DCEBD4">🧅</div><div class="pname">Onion</div><div class="pprice num">Rs 55 / kg</div></div>
+                </div>
+              </div>
+              <div class="pos-cart">
+                <div class="cart-head"><b>Current Sale</b><span class="hold-btn">Hold</span></div>
+                <div class="cart-item">
+                  <div class="cart-item-top"><span>Chicken Boneless</span><span class="num">Rs 360.00</span></div>
+                  <div class="cart-item-sub"><span class="num">0.750 kg × Rs 480/kg</span><span>✕</span></div>
+                </div>
+                <div class="cart-item">
+                  <div class="cart-item-top"><span>Mutton Leg</span><span class="num">Rs 1,440.00</span></div>
+                  <div class="cart-item-sub"><span class="num">1.200 kg × Rs 1,200/kg</span><span>✕</span></div>
+                </div>
+                <div class="cart-cust"><span>Customer: Walk-in</span><span>+ Add</span></div>
+                <div class="totals">
+                  <div class="row"><span>Subtotal</span><span class="num">Rs 1,800.00</span></div>
+                  <div class="row"><span>Discount (0%)</span><span class="num">− Rs 0.00</span></div>
+                  <div class="row"><span>Tax</span><span class="num">Rs 0.00</span></div>
+                  <div class="row grand"><span>Total</span><span class="num">Rs 1,800.00</span></div>
+                </div>
+                <div class="pay-row">
+                  <div class="pay-btn">💵 Cash</div>
+                  <div class="pay-btn">📱 QR</div>
+                  <div class="pay-btn">➗ Mixed</div>
+                </div>
+                <div class="charge-btn">Charge Rs 1,800.00</div>
+              </div>
+            </div>
+            <div class="pos-footer">
+              <span><kbd>F1</kbd>Search</span><span><kbd>F2</kbd>Weight</span>
+              <span><kbd>F3</kbd>Discount</span><span><kbd>F4</kbd>Customer</span>
+              <span><kbd>F5</kbd>Hold</span><span><kbd>F9</kbd>Charge</span><span><kbd>Esc</kbd>Void</span>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          <h3>Design decisions</h3>
+          <ul>
+            <li><b>Cart never leaves view.</b> No page navigation mid-sale — right rail is always live.</li>
+            <li><b>64px+ touch targets</b> on every product card; category chips filter instantly, no reload.</li>
+            <li><b>Weight/qty entry is a generic component</b> — triggered by any unit-tracked product, not meat-specific.</li>
+            <li><b>Payment buttons render from the tenant's configured Payment Manager gateways</b> — adding a gateway later adds a button, not a rebuild.</li>
+            <li><b>Shortcut bar</b> is persistent and toggleable — cashier speed over mouse-driven flows.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- Customer Display -->
+      <section class="panel panel-cd">
+        <div class="frame-shell">
+          <p class="frame-label">Customer Display — fullscreen, second monitor</p>
+          <div class="cd-screen">
+            <div class="cd-head">
+              <div class="cd-mark">M</div>
+              <div class="cd-name">Magar Masu Pasal Tatha Anya Tarkari</div>
+              <div class="cd-meta"><span>Fri, 19 Jul 2026</span><span>04:12 PM</span><span>Cashier: Sita</span></div>
+            </div>
+            <div class="cd-table">
+              <div class="cd-row"><span class="it">Chicken Boneless</span><span class="num">Rs 360.00</span></div>
+              <div class="cd-row"><span class="sub num">0.750 kg @ Rs 480/kg</span><span></span></div>
+              <div class="cd-row"><span class="it">Mutton Leg</span><span class="num">Rs 1,440.00</span></div>
+              <div class="cd-row"><span class="sub num">1.200 kg @ Rs 1,200/kg</span><span></span></div>
+            </div>
+            <div class="cd-row"><span>Subtotal</span><span class="num">Rs 1,800.00</span></div>
+            <div class="cd-row"><span>Discount</span><span class="num">Rs 0.00</span></div>
+            <div class="cd-totalcard">
+              <div class="lbl">Grand Total</div>
+              <div class="amt num">Rs 1,800.00</div>
+            </div>
+            <div class="cd-status">⏳ Waiting for payment… <b>/ ✅ Payment Successful — Thank you!</b></div>
+          </div>
+        </div>
+        <aside class="notes">
+          <h3>Design decisions</h3>
+          <ul>
+            <li><b>Pure consumer, no input.</b> Every pixel here is driven by <code>TerminalStateUpdated</code> broadcasts from the paired POS over Reverb — no polling, no local logic.</li>
+            <li><b>Commits to one dark, high-contrast look</b> regardless of the shop's chosen theme — legible from a distance, in bright shop lighting, day or night.</li>
+            <li><b>Idle state</b> (no active cart) rotates business announcements/promotions full-bleed instead of an empty screen.</li>
+            <li><b>State transitions animate</b> (fade/slide) — item added → payment pending → success → thank-you → idle — never a hard refresh.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- Dashboard -->
+      <section class="panel panel-dash">
+        <div class="frame-shell">
+          <p class="frame-label">Dashboard — role-aware landing page</p>
+          <div class="pos-app" style="padding:16px;">
+            <div class="dash">
+              <div class="stat-row">
+                <div class="stat-card"><div class="lbl">Today's Sales</div><div class="val num">Rs 42,300</div></div>
+                <div class="stat-card"><div class="lbl">Transactions</div><div class="val num">58</div></div>
+                <div class="stat-card"><div class="lbl">Avg. Sale</div><div class="val num">Rs 729</div></div>
+                <div class="stat-card"><div class="lbl">Low Stock Items</div><div class="val warn num">6</div></div>
+              </div>
+              <div class="dash-grid">
+                <div class="card">
+                  <h4>Sales Trend — 7 days</h4>
+                  <div class="bars">
+                    <div class="bar" style="height:40%"><span style="height:100%"></span></div>
+                    <div class="bar" style="height:55%"><span style="height:100%"></span></div>
+                    <div class="bar" style="height:35%"><span style="height:100%"></span></div>
+                    <div class="bar" style="height:70%"><span style="height:100%"></span></div>
+                    <div class="bar" style="height:60%"><span style="height:100%"></span></div>
+                    <div class="bar" style="height:85%"><span style="height:100%"></span></div>
+                    <div class="bar" style="height:100%"><span style="height:100%"></span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <h4>Recent Sales</h4>
+                  <div class="list-row"><span>#INV-1042</span><span class="num">Rs 1,800 · Sita</span></div>
+                  <div class="list-row"><span>#INV-1041</span><span class="num">Rs 450 · Ram</span></div>
+                  <div class="list-row"><span>#INV-1040</span><span class="num">Rs 2,120 · Sita</span></div>
+                </div>
+                <div class="card">
+                  <h4>Top Selling Products</h4>
+                  <div class="list-row"><span>Chicken Boneless</span><span class="num">142 kg</span></div>
+                  <div class="list-row"><span>Mutton Leg</span><span class="num">88 kg</span></div>
+                  <div class="list-row"><span>Buff Boneless</span><span class="num">76 kg</span></div>
+                </div>
+                <div class="card">
+                  <h4>Alerts &amp; Notifications</h4>
+                  <div class="alert-row"><span class="dot warn"></span><span>Chicken Boneless below minimum stock (2.1 kg left)</span></div>
+                  <div class="alert-row"><span class="dot crit"></span><span>Supplier "Kalimati Traders" due Rs 18,500 — 12 days overdue</span></div>
+                  <div class="alert-row"><span class="dot warn"></span><span>Large discount (25%) applied by Cashier Ram on #INV-1039</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          <h3>Design decisions</h3>
+          <ul>
+            <li><b>Widgets are permission-aware</b> — a Cashier sees their own shift; an Owner sees all branches; an Accountant sees P&amp;L instead of stock alerts.</li>
+            <li><b>Live tiles</b> update via a debounced <code>DashboardMetricUpdated</code> broadcast, not a page refresh.</li>
+            <li><b>Alert severity encoded in form</b> (dot color), not just text — scannable at a glance.</li>
+            <li><b>Widget set is config-driven per business type</b>, never hardcoded per industry.</li>
+          </ul>
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="credit">
+    Companion to <code>docs/architecture/05-screen-wireframes.md</code> — Retail ERP for Nepal, design phase.
+  </footer>
+</div>
