@@ -5,11 +5,15 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Modules\Categories\Models\Category;
+use Modules\Customers\Models\Customer;
+use Modules\Customers\Models\CustomerGroup;
+use Modules\Customers\Services\CustomerGroupService;
 use Modules\Products\Models\Product;
 use Modules\Purchases\Services\PurchaseService;
 use Modules\Settings\Services\SettingsService;
 use Modules\Suppliers\Models\Supplier;
 use Modules\Tenancy\Models\Branch;
+use Modules\Tenancy\Models\BranchTerminal;
 use Modules\Tenancy\Models\Business;
 use Modules\Tenancy\Models\BusinessType;
 use Modules\Units\Models\Unit;
@@ -38,6 +42,7 @@ class MagarMasuPasalSeeder extends Seeder
         );
 
         app(SettingsService::class)->applyBusinessTypeDefaults($business->id, $businessType->default_config);
+        app(CustomerGroupService::class)->applyBusinessTypeDefaults($business->id, $businessType->default_config);
 
         $branch = Branch::updateOrCreate(
             ['business_id' => $business->id, 'name' => 'Halchowk'],
@@ -46,6 +51,10 @@ class MagarMasuPasalSeeder extends Seeder
                 'is_main' => true,
                 'status' => 'active',
             ],
+        );
+
+        $terminal = BranchTerminal::updateOrCreate(
+            ['business_id' => $business->id, 'branch_id' => $branch->id, 'name' => 'Counter 1'],
         );
 
         $staff = [
@@ -75,7 +84,27 @@ class MagarMasuPasalSeeder extends Seeder
             }
         }
 
+        $this->seedCustomers($business);
         $this->seedCatalogAndFirstPurchase($business, $branch, $owner);
+
+        $this->command?->info("POS terminal ready: /pos/terminals/{$terminal->public_id}");
+        $this->command?->info("Customer display ready: /display/terminals/{$terminal->public_id}");
+    }
+
+    private function seedCustomers(Business $business): void
+    {
+        $retail = CustomerGroup::where('business_id', $business->id)->where('name', 'Retail')->first();
+        $credit = CustomerGroup::where('business_id', $business->id)->where('name', 'Credit')->first();
+
+        Customer::updateOrCreate(
+            ['business_id' => $business->id, 'phone' => '9841000001'],
+            ['name' => 'Bikash Shrestha', 'customer_group_id' => $retail?->id],
+        );
+
+        Customer::updateOrCreate(
+            ['business_id' => $business->id, 'phone' => '9841000002'],
+            ['name' => 'Hotel Everest Kitchen', 'customer_group_id' => $credit?->id],
+        );
     }
 
     private function seedCatalogAndFirstPurchase(Business $business, Branch $branch, User $owner): void
@@ -90,11 +119,11 @@ class MagarMasuPasalSeeder extends Seeder
         $dz = Unit::where('symbol', 'dz')->whereNull('business_id')->firstOrFail();
 
         $products = [
-            ['name' => 'Chicken Boneless', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 420, 'sell' => 480, 'weight' => true],
-            ['name' => 'Mutton Leg', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 1050, 'sell' => 1200, 'weight' => true],
-            ['name' => 'Buff Boneless', 'category' => 'Buff', 'unit' => $kg, 'cost' => 560, 'sell' => 650, 'weight' => true],
-            ['name' => 'Mustard Greens', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 40, 'sell' => 60, 'weight' => true],
-            ['name' => 'Farm Eggs', 'category' => 'Vegetables', 'unit' => $dz, 'cost' => 180, 'sell' => 210, 'weight' => false],
+            ['name' => 'Chicken Boneless', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 420, 'sell' => 480, 'weight' => true, 'stock' => 20],
+            ['name' => 'Mutton Leg', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 1050, 'sell' => 1200, 'weight' => true, 'stock' => 10],
+            ['name' => 'Buff Boneless', 'category' => 'Buff', 'unit' => $kg, 'cost' => 560, 'sell' => 650, 'weight' => true, 'stock' => 15],
+            ['name' => 'Mustard Greens', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 40, 'sell' => 60, 'weight' => true, 'stock' => 25],
+            ['name' => 'Farm Eggs', 'category' => 'Vegetables', 'unit' => $dz, 'cost' => 180, 'sell' => 210, 'weight' => false, 'stock' => 12],
         ];
 
         $created = [];
@@ -133,29 +162,22 @@ class MagarMasuPasalSeeder extends Seeder
                 'reference_no' => 'PO-0001',
                 'created_by' => $owner->id,
             ],
-            [
-                ['business_id' => $business->id, 'product_id' => $created['Chicken Boneless']->id, 'ordered_qty' => 20, 'unit_cost' => 420],
-                ['business_id' => $business->id, 'product_id' => $created['Mutton Leg']->id, 'ordered_qty' => 10, 'unit_cost' => 1050],
-            ],
+            collect($products)->map(fn ($p) => [
+                'business_id' => $business->id,
+                'product_id' => $created[$p['name']]->id,
+                'ordered_qty' => $p['stock'],
+                'unit_cost' => $p['cost'],
+            ])->all(),
         );
 
         $purchaseService->markOrdered($order);
 
-        $purchaseService->receiveGoods($order, [
-            [
-                'purchase_order_item_id' => $order->items[0]->id,
-                'quantity' => 20,
-                'unit_cost' => 420,
-                'batch_number' => 'B-0001',
-                'expiry_date' => now()->addDays(4)->toDateString(),
-            ],
-            [
-                'purchase_order_item_id' => $order->items[1]->id,
-                'quantity' => 10,
-                'unit_cost' => 1050,
-                'batch_number' => 'B-0002',
-                'expiry_date' => now()->addDays(4)->toDateString(),
-            ],
-        ]);
+        $purchaseService->receiveGoods($order, $order->items->map(fn ($item, $index) => [
+            'purchase_order_item_id' => $item->id,
+            'quantity' => $products[$index]['stock'],
+            'unit_cost' => $products[$index]['cost'],
+            'batch_number' => 'B-' . str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT),
+            'expiry_date' => now()->addDays(4)->toDateString(),
+        ])->all());
     }
 }

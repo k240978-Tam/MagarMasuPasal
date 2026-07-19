@@ -9,5 +9,11 @@
     "Products": true,
     "Suppliers": true,
     "Purchases": true,
-    "Inventory": true
+    "Inventory": true,
+    "Customers": true,
+    "PaymentManager": true,
+    "CashRegister": true,
+    "Sales": true,
+    "POS": true,
+    "CustomerDisplay": true
 }

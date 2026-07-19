@@ -1,0 +1,11 @@
+{
+    "name": "CustomerDisplay",
+    "alias": "customerdisplay",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CustomerDisplay\\Providers\\CustomerDisplayServiceProvider"
+    ],
+    "files": []
+}

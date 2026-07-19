@@ -8,7 +8,6 @@ use Modules\Inventory\Models\InventoryStock;
 use Modules\Inventory\Models\StockAdjustment;
 use Modules\Inventory\Models\StockMovement;
 use Modules\Inventory\Models\StockTransfer;
-use Modules\Products\Models\Product;
 use Modules\Purchases\Models\PurchaseBatch;
 use RuntimeException;
 
@@ -106,6 +105,49 @@ class InventoryService
             $this->adjustOnHand($businessId, $branchId, $productId, -$quantity);
 
             return $movements;
+        });
+    }
+
+    /**
+     * Credits stock back on a sale return. When the original batch is known
+     * (the sale line drew from exactly one), the quantity goes back onto
+     * that same batch so its remaining FIFO cost basis is preserved;
+     * otherwise it's tracked as an unbatched restock.
+     */
+    public function returnToStock(
+        int $businessId,
+        int $branchId,
+        int $productId,
+        float $quantity,
+        ?int $batchId,
+        string $referenceType,
+        int $referenceId,
+    ): StockMovement {
+        return DB::transaction(function () use ($businessId, $branchId, $productId, $quantity, $batchId, $referenceType, $referenceId) {
+            $unitCost = null;
+
+            if ($batchId) {
+                $batch = PurchaseBatch::withoutTenantScope()->findOrFail($batchId);
+                $batch->increment('quantity_remaining', $quantity);
+                $unitCost = $batch->unit_cost;
+            }
+
+            $movement = StockMovement::create([
+                'business_id' => $businessId,
+                'branch_id' => $branchId,
+                'product_id' => $productId,
+                'batch_id' => $batchId,
+                'type' => 'sale_return',
+                'quantity_change' => $quantity,
+                'reference_type' => $referenceType,
+                'reference_id' => $referenceId,
+                'unit_cost_at_movement' => $unitCost,
+                'created_by' => Auth::id(),
+            ]);
+
+            $this->adjustOnHand($businessId, $branchId, $productId, $quantity);
+
+            return $movement;
         });
     }
 
