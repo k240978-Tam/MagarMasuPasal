@@ -17,5 +17,8 @@
     "POS": true,
     "CustomerDisplay": true,
     "Expenses": true,
-    "Accounting": true
+    "Accounting": true,
+    "Analytics": true,
+    "Reports": true,
+    "Dashboard": true
 }

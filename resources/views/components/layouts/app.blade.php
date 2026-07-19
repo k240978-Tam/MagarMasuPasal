@@ -19,8 +19,21 @@
                     </div>
                 </div>
 
+                @php
+                    $navTerminal = \Modules\Tenancy\Models\BranchTerminal::where('business_id', auth()->user()->business_id)
+                        ->when(auth()->user()->default_branch_id, fn ($q) => $q->where('branch_id', auth()->user()->default_branch_id))
+                        ->first();
+                @endphp
                 <nav class="hidden items-center gap-1 md:flex">
                     <a href="{{ route('dashboard') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-surface-2 text-ink' : '' }}">Dashboard</a>
+                    @can('pos.operate')
+                        @if ($navTerminal)
+                            <a href="{{ route('pos.screen', $navTerminal->public_id) }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink">Point of Sale</a>
+                        @endif
+                    @endcan
+                    @can('reports.view')
+                        <a href="{{ route('reports.sales') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('reports.*') ? 'bg-surface-2 text-ink' : '' }}">Reports</a>
+                    @endcan
                 </nav>
 
                 <div class="flex items-center gap-3">

@@ -190,6 +190,7 @@
         <div x-show="lastSale" x-cloak x-transition class="fixed bottom-6 right-6 z-40 rounded-xl border border-success/30 bg-surface p-4 shadow-lg">
             <div class="text-sm font-semibold text-success">✅ Sale completed</div>
             <div class="text-xs text-ink-soft" x-text="lastSale?.invoice_no + ' · Rs ' + lastSale?.total_amount"></div>
+            <a :href="'/sales/' + lastSale?.public_id + '/receipt'" target="_blank" class="mt-1 inline-block text-xs font-semibold text-info">Print receipt</a>
         </div>
     </div>
 </x-layouts.pos>
