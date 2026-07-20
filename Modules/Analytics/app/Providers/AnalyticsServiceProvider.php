@@ -40,8 +40,15 @@ class AnalyticsServiceProvider extends ModuleServiceProvider
     /**
      * Define module schedules.
      */
+    /**
+     * Explicit Asia/Kathmandu time — see BackupServiceProvider for why an
+     * un-anchored dailyAt() is wrong here (config('app.timezone') is UTC,
+     * not the tenant's own timezone).
+     */
     protected function configureSchedules(Schedule $schedule): void
     {
-        $schedule->command(AggregateDailySalesCommand::class)->dailyAt('00:30');
+        $schedule->command(AggregateDailySalesCommand::class)
+            ->dailyAt('01:30')->timezone('Asia/Kathmandu')
+            ->withoutOverlapping()->onOneServer();
     }
 }

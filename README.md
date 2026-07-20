@@ -1,59 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Retail ERP for Nepal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A production-grade, multi-tenant Retail ERP — not a simple POS — built for
+independent retailers in Nepal, starting with **Magar Masu Pasal Tatha
+Anya Tarkari** (a meat shop, Halchowk, Kathmandu). It covers Point of
+Sale, Inventory, Accounting, Purchasing, Suppliers, Customers, Reports,
+Analytics, a live Customer Display, multi-branch operations, notifications,
+and audit logging in one system.
 
-## About Laravel
+**No business-type-specific logic is ever hardcoded.** Every business
+(meat shop, grocery, pharmacy, restaurant, clothing store, ...) is
+configuration data — units, product attributes, default customer groups,
+receipt sections — against the same generic module code. See
+[`Modules/Tenancy/database/seeders/BusinessTypeSeeder.php`](Modules/Tenancy/database/seeders/BusinessTypeSeeder.php)
+for the current catalog of supported types.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Documentation
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Doc | Covers |
+|---|---|
+| [`docs/architecture/01-system-architecture.md`](docs/architecture/01-system-architecture.md) | High-level architecture, offline-tolerant POS PWA |
+| [`docs/architecture/02-module-breakdown.md`](docs/architecture/02-module-breakdown.md) | Every module and its responsibility |
+| [`docs/architecture/03-database-schema.md`](docs/architecture/03-database-schema.md) | Schema design |
+| [`docs/architecture/06-api-design.md`](docs/architecture/06-api-design.md) | Public REST API conventions, versioning policy |
+| [`docs/architecture/08-roadmap.md`](docs/architecture/08-roadmap.md) | Phased build roadmap and exit criteria |
+| [`docs/openapi.yaml`](docs/openapi.yaml) | OpenAPI 3.1 spec for the `/api/v1` surface |
+| [`docs/operations/deployment.md`](docs/operations/deployment.md) | Production deployment runbook |
+| [`docs/operations/go-live-checklist.md`](docs/operations/go-live-checklist.md) | Pre-launch checklist for a new tenant |
+| [`docs/operations/post-launch-monitoring.md`](docs/operations/post-launch-monitoring.md) | Daily/weekly ops watch after launch |
+| [`docs/onboarding/`](docs/onboarding/) | Role-based staff guides (Owner, Manager, Cashier) |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Stack
 
-## Learning Laravel
+Laravel 12 (PHP 8.3+), modularized with `nwidart/laravel-modules` — Clean
+Architecture, Repository/Service patterns, DTOs, Form Requests, Events/
+Listeners, Queues. Tailwind + Alpine.js frontend, Chart.js for dashboards,
+Laravel Reverb + Echo for real-time POS↔Customer Display sync and live
+dashboard tiles. Spatie Permission (roles/policies) and Media Library.
+DomPDF for receipts/reports, Simple QRCode for receipt QR codes. MySQL in
+production, Redis for cache/queue/sessions, Supervisor for process
+management. Sanctum for both stateful web sessions and API tokens.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Payment processing goes through a generic, provider-independent Payment
+Manager (`Modules/PaymentManager`) — only `cash` and staff-confirmed
+`manual_qr` ship today; adding a real gateway (eSewa, Khalti, FonePay) is
+one new class, no changes anywhere else, by design (see
+[06-api-design.md §6.3](docs/architecture/06-api-design.md#63-payment-manager-interfaces)).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Local development
 
-## Laravel Sponsors
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed   # provisions platform reference data + the first tenant
+npm run dev                  # Vite, in one terminal
+php artisan serve            # in another
+php artisan reverb:start     # for live POS/Customer Display sync
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Seeded staff logins (all password `password` — change before any real
+use): `owner@magarmasupasal.test`, `manager@magarmasupasal.test`,
+`cashier@magarmasupasal.test`.
 
-### Premium Partners
+## Testing
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+php artisan test        # PHPUnit feature/unit suite
+./vendor/bin/pint --test # style check
+./vendor/bin/phpstan analyse # static analysis (see phpstan.neon.dist)
+```
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+CI runs all of the above plus `composer audit`/`npm audit` on every push —
+see `.github/workflows/`.

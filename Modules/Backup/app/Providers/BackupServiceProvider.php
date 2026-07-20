@@ -44,9 +44,21 @@ class BackupServiceProvider extends ModuleServiceProvider
     /**
      * Define module schedules.
      */
+    /**
+     * Explicit Asia/Kathmandu times: config('app.timezone') stays UTC (the
+     * server's own clock), and every business on the platform today is in
+     * Nepal, so an un-anchored dailyAt() would land in the middle of the
+     * shop's business hours instead of overnight. Found during the Phase 8
+     * launch review.
+     */
     protected function configureSchedules(Schedule $schedule): void
     {
-        $schedule->command(RunBackupCommand::class)->dailyAt('02:00');
-        $schedule->command(VerifyBackupsCommand::class)->dailyAt('02:30');
+        $schedule->command(RunBackupCommand::class)
+            ->dailyAt('01:00')->timezone('Asia/Kathmandu')
+            ->withoutOverlapping()->onOneServer();
+
+        $schedule->command(VerifyBackupsCommand::class)
+            ->dailyAt('01:15')->timezone('Asia/Kathmandu')
+            ->withoutOverlapping()->onOneServer();
     }
 }

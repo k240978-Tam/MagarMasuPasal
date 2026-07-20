@@ -179,9 +179,17 @@ class MagarMasuPasalSeeder extends Seeder
         ));
     }
 
+    /**
+     * The real launch catalog: "Tatha Anya Tarkari" (and other vegetables)
+     * in the business name means this is a meat shop that also sells
+     * everyday vegetables, not a pure butcher — reflected in the category
+     * mix below. Expiry windows vary by category (fresh meat spoils fastest,
+     * eggs keep longest) rather than the single flat offset the Phase 0-1
+     * demo data used.
+     */
     private function seedCatalogAndFirstPurchase(Business $business, Branch $branch, User $owner): array
     {
-        $categories = collect(['Chicken', 'Mutton', 'Buff', 'Vegetables'])
+        $categories = collect(['Chicken', 'Mutton', 'Buff', 'Pork', 'Eggs', 'Vegetables'])
             ->mapWithKeys(fn (string $name) => [$name => Category::updateOrCreate(
                 ['business_id' => $business->id, 'slug' => Str::slug($name)],
                 ['name' => $name],
@@ -191,11 +199,36 @@ class MagarMasuPasalSeeder extends Seeder
         $dz = Unit::where('symbol', 'dz')->whereNull('business_id')->firstOrFail();
 
         $products = [
-            ['name' => 'Chicken Boneless', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 420, 'sell' => 480, 'weight' => true, 'stock' => 20],
-            ['name' => 'Mutton Leg', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 1050, 'sell' => 1200, 'weight' => true, 'stock' => 10],
-            ['name' => 'Buff Boneless', 'category' => 'Buff', 'unit' => $kg, 'cost' => 560, 'sell' => 650, 'weight' => true, 'stock' => 15],
-            ['name' => 'Mustard Greens', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 40, 'sell' => 60, 'weight' => true, 'stock' => 25],
-            ['name' => 'Farm Eggs', 'category' => 'Vegetables', 'unit' => $dz, 'cost' => 180, 'sell' => 210, 'weight' => false, 'stock' => 12],
+            ['name' => 'Chicken Whole', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 380, 'sell' => 440, 'weight' => true, 'stock' => 25, 'expiry_days' => 3],
+            ['name' => 'Chicken Boneless', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 420, 'sell' => 480, 'weight' => true, 'stock' => 20, 'expiry_days' => 3],
+            ['name' => 'Chicken Breast', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 440, 'sell' => 500, 'weight' => true, 'stock' => 15, 'expiry_days' => 3],
+            ['name' => 'Chicken Wings', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 320, 'sell' => 380, 'weight' => true, 'stock' => 12, 'expiry_days' => 3],
+            ['name' => 'Chicken Drumstick', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 340, 'sell' => 400, 'weight' => true, 'stock' => 15, 'expiry_days' => 3],
+            ['name' => 'Chicken Liver', 'category' => 'Chicken', 'unit' => $kg, 'cost' => 280, 'sell' => 340, 'weight' => true, 'stock' => 6, 'expiry_days' => 2],
+
+            ['name' => 'Mutton Leg', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 1050, 'sell' => 1200, 'weight' => true, 'stock' => 10, 'expiry_days' => 3],
+            ['name' => 'Mutton Curry Cut', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 980, 'sell' => 1150, 'weight' => true, 'stock' => 12, 'expiry_days' => 3],
+            ['name' => 'Mutton Ribs', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 900, 'sell' => 1050, 'weight' => true, 'stock' => 8, 'expiry_days' => 3],
+            ['name' => 'Mutton Liver', 'category' => 'Mutton', 'unit' => $kg, 'cost' => 850, 'sell' => 1000, 'weight' => true, 'stock' => 5, 'expiry_days' => 2],
+
+            ['name' => 'Buff Boneless', 'category' => 'Buff', 'unit' => $kg, 'cost' => 560, 'sell' => 650, 'weight' => true, 'stock' => 15, 'expiry_days' => 3],
+            ['name' => 'Buff Curry Cut', 'category' => 'Buff', 'unit' => $kg, 'cost' => 480, 'sell' => 570, 'weight' => true, 'stock' => 18, 'expiry_days' => 3],
+            ['name' => 'Buff Mince (Keema)', 'category' => 'Buff', 'unit' => $kg, 'cost' => 520, 'sell' => 610, 'weight' => true, 'stock' => 10, 'expiry_days' => 2],
+
+            ['name' => 'Pork Belly', 'category' => 'Pork', 'unit' => $kg, 'cost' => 480, 'sell' => 560, 'weight' => true, 'stock' => 10, 'expiry_days' => 3],
+            ['name' => 'Pork Curry Cut', 'category' => 'Pork', 'unit' => $kg, 'cost' => 440, 'sell' => 520, 'weight' => true, 'stock' => 8, 'expiry_days' => 3],
+
+            ['name' => 'Farm Eggs', 'category' => 'Eggs', 'unit' => $dz, 'cost' => 180, 'sell' => 210, 'weight' => false, 'stock' => 12, 'expiry_days' => 18],
+            ['name' => 'Duck Eggs', 'category' => 'Eggs', 'unit' => $dz, 'cost' => 260, 'sell' => 300, 'weight' => false, 'stock' => 6, 'expiry_days' => 18],
+
+            ['name' => 'Mustard Greens', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 40, 'sell' => 60, 'weight' => true, 'stock' => 25, 'expiry_days' => 5],
+            ['name' => 'Potato', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 45, 'sell' => 60, 'weight' => true, 'stock' => 40, 'expiry_days' => 14],
+            ['name' => 'Onion', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 70, 'sell' => 90, 'weight' => true, 'stock' => 35, 'expiry_days' => 14],
+            ['name' => 'Tomato', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 60, 'sell' => 85, 'weight' => true, 'stock' => 20, 'expiry_days' => 5],
+            ['name' => 'Cauliflower', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 50, 'sell' => 70, 'weight' => true, 'stock' => 18, 'expiry_days' => 5],
+            ['name' => 'Spinach', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 35, 'sell' => 55, 'weight' => true, 'stock' => 15, 'expiry_days' => 3],
+            ['name' => 'Green Beans', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 65, 'sell' => 90, 'weight' => true, 'stock' => 14, 'expiry_days' => 5],
+            ['name' => 'Radish', 'category' => 'Vegetables', 'unit' => $kg, 'cost' => 30, 'sell' => 45, 'weight' => true, 'stock' => 20, 'expiry_days' => 7],
         ];
 
         $created = [];
@@ -207,7 +240,7 @@ class MagarMasuPasalSeeder extends Seeder
                     'unit_id' => $p['unit']->id,
                     'sell_by_weight' => $p['weight'],
                     'track_batches' => true,
-                    'track_expiry' => $p['weight'],
+                    'track_expiry' => true,
                     'cost_price' => $p['cost'],
                     'selling_price' => $p['sell'],
                     'min_stock' => 5,
@@ -249,7 +282,7 @@ class MagarMasuPasalSeeder extends Seeder
             'quantity' => $products[$index]['stock'],
             'unit_cost' => $products[$index]['cost'],
             'batch_number' => 'B-'.str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT),
-            'expiry_date' => now()->addDays(4)->toDateString(),
+            'expiry_date' => now()->addDays($products[$index]['expiry_days'])->toDateString(),
         ])->all());
 
         return $created;

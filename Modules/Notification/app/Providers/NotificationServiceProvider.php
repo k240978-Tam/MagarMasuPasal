@@ -44,10 +44,24 @@ class NotificationServiceProvider extends ModuleServiceProvider
     /**
      * Define module schedules.
      */
+    /**
+     * Explicit Asia/Kathmandu times, scheduled to land shortly before the
+     * shop opens rather than at an arbitrary UTC hour that could fall in
+     * the middle of the business day — see BackupServiceProvider for why
+     * an un-anchored dailyAt() is wrong here.
+     */
     protected function configureSchedules(Schedule $schedule): void
     {
-        $schedule->command(SendLowStockAlertsCommand::class)->dailyAt('08:00');
-        $schedule->command(SendDailySummaryCommand::class)->dailyAt('07:00');
-        $schedule->command(SendDueAlertsCommand::class)->dailyAt('08:15');
+        $schedule->command(SendDailySummaryCommand::class)
+            ->dailyAt('06:30')->timezone('Asia/Kathmandu')
+            ->withoutOverlapping()->onOneServer();
+
+        $schedule->command(SendLowStockAlertsCommand::class)
+            ->dailyAt('06:45')->timezone('Asia/Kathmandu')
+            ->withoutOverlapping()->onOneServer();
+
+        $schedule->command(SendDueAlertsCommand::class)
+            ->dailyAt('07:00')->timezone('Asia/Kathmandu')
+            ->withoutOverlapping()->onOneServer();
     }
 }
