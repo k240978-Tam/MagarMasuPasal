@@ -111,7 +111,16 @@ window.posApp = function (config) {
         },
 
         adjustQty(item, delta) {
-            const next = Math.max(0, Math.round((item.quantity + delta) * 1000) / 1000);
+            this.setQty(item, item.quantity + delta);
+        },
+
+        setQty(item, quantity) {
+            const next = Math.round(Number(quantity) * 1000) / 1000;
+
+            // A stray non-numeric entry or a typed 0 shouldn't silently
+            // delete the line — removal is what the ✕ button is for.
+            if (!(next > 0)) return;
+
             this.runOrReport(() => call('PATCH', `/cart/items/${item.product_id}`, { quantity: next }));
         },
 

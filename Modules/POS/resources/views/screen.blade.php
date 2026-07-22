@@ -77,7 +77,19 @@
                                     <span class="tabular-nums" x-text="'Rs ' + (item.quantity * item.unit_price).toFixed(2)"></span>
                                 </div>
                                 <div class="mt-1 flex items-center justify-between text-xs text-ink-soft">
-                                    <span class="tabular-nums" x-text="item.quantity + ' ' + item.unit_symbol + ' × Rs ' + item.unit_price"></span>
+                                    <span class="flex items-center gap-1 tabular-nums">
+                                        <input
+                                            type="number"
+                                            :value="item.quantity"
+                                            :step="item.sell_by_weight ? 0.01 : 1"
+                                            min="0"
+                                            @click="$event.target.select()"
+                                            @change="setQty(item, $event.target.value)"
+                                            @keydown.enter="$event.target.blur()"
+                                            class="w-16 rounded border border-line bg-surface-2 px-1 py-0.5 text-right text-xs tabular-nums"
+                                        >
+                                        <span x-text="item.unit_symbol + ' × Rs ' + item.unit_price"></span>
+                                    </span>
                                     <div class="flex items-center gap-2">
                                         <button type="button" class="rounded border border-line px-1.5" @click="adjustQty(item, item.sell_by_weight ? -0.1 : -1)">−</button>
                                         <button type="button" class="rounded border border-line px-1.5" @click="adjustQty(item, item.sell_by_weight ? 0.1 : 1)">+</button>
