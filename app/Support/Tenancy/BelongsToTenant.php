@@ -17,11 +17,11 @@ trait BelongsToTenant
         static::addGlobalScope(new TenantScope);
 
         static::creating(function (Model $model) {
-            if (empty($model->business_id)) {
+            if (empty($model->getAttribute('business_id'))) {
                 $context = app(TenantContext::class);
 
                 if ($context->hasBusiness()) {
-                    $model->business_id = $context->businessId();
+                    $model->setAttribute('business_id', $context->businessId());
                 }
             }
         });
