@@ -10,4 +10,11 @@ parameters:
         - Modules/*/tests/*
         - Modules/*/database/*
     tmpDir: storage/phpstan
-    checkModelProperties: false
+    # Larastan suppresses PHPStan's base "undefined property" rule for
+    # Eloquent's magic properties by inferring each model's real columns —
+    # from the actual migrated DB schema, not from PHPDoc annotations this
+    # codebase doesn't carry. With this off, Larastan provides no
+    # suppression at all, so the base rule flags every single magic
+    # property access on every model. Requires migrations to have run
+    # before analysis (see the CI job) so there's a schema to introspect.
+    checkModelProperties: true
