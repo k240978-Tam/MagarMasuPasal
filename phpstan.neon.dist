@@ -10,11 +10,17 @@ parameters:
         - Modules/*/tests/*
         - Modules/*/database/*
     tmpDir: storage/phpstan
-    # Larastan suppresses PHPStan's base "undefined property" rule for
-    # Eloquent's magic properties by inferring each model's real columns —
-    # from the actual migrated DB schema, not from PHPDoc annotations this
-    # codebase doesn't carry. With this off, Larastan provides no
-    # suppression at all, so the base rule flags every single magic
-    # property access on every model. Requires migrations to have run
-    # before analysis (see the CI job) so there's a schema to introspect.
+    # checkModelProperties is a different feature entirely (catches typos
+    # in array keys like User::create(['emaiil' => ...])) — not what
+    # suppresses "undefined property" on direct $model->column access.
+    # That suppression comes from Larastan statically parsing migration
+    # *files* (not a live DB) to learn each model's columns, and it only
+    # scans database/migrations by default. Every module keeps its actual
+    # schema-defining migrations under Modules/*/database/migrations
+    # (nwidart/laravel-modules convention) — Larastan never saw any of
+    # them, which is why every magic property access on every model was
+    # flagged (306 findings, one root cause, not 306 bugs).
     checkModelProperties: true
+    databaseMigrationsPath:
+        - database/migrations
+        - Modules/*/database/migrations
