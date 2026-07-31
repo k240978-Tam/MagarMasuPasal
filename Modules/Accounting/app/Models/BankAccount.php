@@ -24,6 +24,9 @@ class BankAccount extends Model
         'opening_balance' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<ChartOfAccount, $this>
+     */
     public function chartOfAccount(): BelongsTo
     {
         return $this->belongsTo(ChartOfAccount::class, 'chart_of_accounts_id');

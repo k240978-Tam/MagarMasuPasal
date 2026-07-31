@@ -28,16 +28,25 @@ class HeldBill extends Model
         'held_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * @return BelongsTo<BranchTerminal, $this>
+     */
     public function terminal(): BelongsTo
     {
         return $this->belongsTo(BranchTerminal::class, 'terminal_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function cashier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cashier_id');

@@ -26,16 +26,25 @@ class BankReconciliation extends Model
         'statement_closing_balance' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<BankAccount, $this>
+     */
     public function bankAccount(): BelongsTo
     {
         return $this->belongsTo(BankAccount::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * @return HasMany<BankReconciliationItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(BankReconciliationItem::class);

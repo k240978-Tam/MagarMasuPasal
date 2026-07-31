@@ -30,16 +30,25 @@ class JournalEntry extends Model
         'entry_date' => 'date',
     ];
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * @return HasMany<JournalEntryLine, $this>
+     */
     public function lines(): HasMany
     {
         return $this->hasMany(JournalEntryLine::class);

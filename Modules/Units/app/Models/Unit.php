@@ -41,6 +41,9 @@ class Unit extends Model
         return $query->withoutGlobalScope(SharedOrTenantScope::class);
     }
 
+    /**
+     * @return BelongsTo<self, $this>
+     */
     public function baseUnit(): BelongsTo
     {
         return $this->belongsTo(self::class, 'base_unit_id');

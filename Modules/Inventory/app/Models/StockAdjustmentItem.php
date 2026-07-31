@@ -22,11 +22,17 @@ class StockAdjustmentItem extends Model
         'quantity' => 'decimal:3',
     ];
 
+    /**
+     * @return BelongsTo<StockAdjustment, $this>
+     */
     public function stockAdjustment(): BelongsTo
     {
         return $this->belongsTo(StockAdjustment::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

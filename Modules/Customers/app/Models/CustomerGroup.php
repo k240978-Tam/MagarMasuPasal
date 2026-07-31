@@ -24,6 +24,9 @@ class CustomerGroup extends Model
         'default_discount_percent' => 'decimal:2',
     ];
 
+    /**
+     * @return HasMany<Customer, $this>
+     */
     public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);

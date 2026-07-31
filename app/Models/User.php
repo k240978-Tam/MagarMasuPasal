@@ -80,16 +80,25 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * @return BelongsTo<Business, $this>
+     */
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function defaultBranch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'default_branch_id');
     }
 
+    /**
+     * @return BelongsToMany<Branch, $this>
+     */
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class, 'user_branch')->withPivot('is_default')->withTimestamps();

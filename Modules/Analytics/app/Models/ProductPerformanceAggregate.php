@@ -27,6 +27,9 @@ class ProductPerformanceAggregate extends Model
         'profit' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

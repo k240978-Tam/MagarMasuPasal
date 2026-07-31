@@ -170,7 +170,7 @@ class SaleService
             $return->update(['refund_amount' => round($refundTotal, 2)]);
 
             $fullyRefunded = $sale->items->sum('quantity') <= $sale->returns()->with('items')->get()
-                ->flatMap->items->sum('quantity');
+                ->flatMap(fn (SaleReturn $return) => $return->items)->sum('quantity');
 
             $sale->update([
                 'status' => $voidSale ? 'void' : ($fullyRefunded ? 'refunded' : 'partially_refunded'),

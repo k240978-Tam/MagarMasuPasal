@@ -26,11 +26,17 @@ class ChartOfAccount extends Model
         'is_system' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<self, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<JournalEntryLine, $this>
+     */
     public function lines(): HasMany
     {
         return $this->hasMany(JournalEntryLine::class, 'account_id');

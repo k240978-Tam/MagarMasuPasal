@@ -34,21 +34,33 @@ class PurchaseOrder extends Model
         'expected_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * @return BelongsTo<Supplier, $this>
+     */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * @return HasMany<PurchaseOrderItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(PurchaseOrderItem::class);

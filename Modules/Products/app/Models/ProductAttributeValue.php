@@ -18,11 +18,17 @@ class ProductAttributeValue extends Model
         'value',
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsTo<ProductAttributeDefinition, $this>
+     */
     public function definition(): BelongsTo
     {
         return $this->belongsTo(ProductAttributeDefinition::class, 'attribute_definition_id');

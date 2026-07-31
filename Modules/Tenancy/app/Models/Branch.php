@@ -27,11 +27,17 @@ class Branch extends Model
         'is_main' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Business, $this>
+     */
     public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
+    /**
+     * @return HasMany<BranchTerminal, $this>
+     */
     public function terminals(): HasMany
     {
         return $this->hasMany(BranchTerminal::class);

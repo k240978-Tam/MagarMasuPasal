@@ -23,6 +23,9 @@ class BranchTerminal extends Model
         'last_seen_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);

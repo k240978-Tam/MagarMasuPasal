@@ -34,16 +34,25 @@ class SaleItem extends Model
         'line_total' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<Sale, $this>
+     */
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsTo<PurchaseBatch, $this>
+     */
     public function batch(): BelongsTo
     {
         return $this->belongsTo(PurchaseBatch::class, 'batch_id');

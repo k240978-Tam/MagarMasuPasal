@@ -22,11 +22,17 @@ class SalePayment extends Model
         'amount' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<Sale, $this>
+     */
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
+    /**
+     * @return BelongsTo<PaymentTransaction, $this>
+     */
     public function transaction(): BelongsTo
     {
         return $this->belongsTo(PaymentTransaction::class, 'payment_transaction_id');

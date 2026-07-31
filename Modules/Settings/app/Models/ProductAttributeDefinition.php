@@ -27,6 +27,9 @@ class ProductAttributeDefinition extends Model
         'is_required' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<BusinessType, $this>
+     */
     public function businessType(): BelongsTo
     {
         return $this->belongsTo(BusinessType::class);

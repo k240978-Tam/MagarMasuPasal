@@ -33,11 +33,17 @@ class Business extends Model
         'pan_vat_number' => 'encrypted',
     ];
 
+    /**
+     * @return BelongsTo<BusinessType, $this>
+     */
     public function businessType(): BelongsTo
     {
         return $this->belongsTo(BusinessType::class);
     }
 
+    /**
+     * @return HasMany<Branch, $this>
+     */
     public function branches(): HasMany
     {
         return $this->hasMany(Branch::class);

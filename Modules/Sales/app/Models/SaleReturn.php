@@ -27,16 +27,25 @@ class SaleReturn extends Model
         'refund_amount' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<Sale, $this>
+     */
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
 
+    /**
+     * @return HasMany<SaleReturnItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(SaleReturnItem::class);

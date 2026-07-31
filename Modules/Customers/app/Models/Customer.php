@@ -27,6 +27,9 @@ class Customer extends Model
         'current_due' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<CustomerGroup, $this>
+     */
     public function group(): BelongsTo
     {
         return $this->belongsTo(CustomerGroup::class, 'customer_group_id');

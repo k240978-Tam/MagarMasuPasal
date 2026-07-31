@@ -21,11 +21,17 @@ class BankReconciliationItem extends Model
         'is_matched' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<BankReconciliation, $this>
+     */
     public function bankReconciliation(): BelongsTo
     {
         return $this->belongsTo(BankReconciliation::class);
     }
 
+    /**
+     * @return BelongsTo<JournalEntryLine, $this>
+     */
     public function journalEntryLine(): BelongsTo
     {
         return $this->belongsTo(JournalEntryLine::class);

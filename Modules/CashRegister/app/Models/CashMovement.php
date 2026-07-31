@@ -24,11 +24,17 @@ class CashMovement extends Model
         'amount' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<CashSession, $this>
+     */
     public function cashSession(): BelongsTo
     {
         return $this->belongsTo(CashSession::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

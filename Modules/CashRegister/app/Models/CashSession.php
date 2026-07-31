@@ -40,26 +40,41 @@ class CashSession extends Model
         'closed_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * @return BelongsTo<BranchTerminal, $this>
+     */
     public function terminal(): BelongsTo
     {
         return $this->belongsTo(BranchTerminal::class, 'terminal_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function openedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'opened_by');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function closedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'closed_by');
     }
 
+    /**
+     * @return HasMany<CashMovement, $this>
+     */
     public function movements(): HasMany
     {
         return $this->hasMany(CashMovement::class);

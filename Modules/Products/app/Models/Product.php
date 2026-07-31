@@ -58,26 +58,41 @@ class Product extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<Unit, $this>
+     */
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
     }
 
+    /**
+     * @return BelongsToMany<Category, $this>
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'product_category');
     }
 
+    /**
+     * @return HasMany<ProductBranchSetting, $this>
+     */
     public function branchSettings(): HasMany
     {
         return $this->hasMany(ProductBranchSetting::class);
     }
 
+    /**
+     * @return HasMany<ProductAttributeValue, $this>
+     */
     public function attributeValues(): HasMany
     {
         return $this->hasMany(ProductAttributeValue::class);
     }
 
+    /**
+     * @return BelongsTo<TaxRule, $this>
+     */
     public function taxRule(): BelongsTo
     {
         return $this->belongsTo(TaxRule::class);

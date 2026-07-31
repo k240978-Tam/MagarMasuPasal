@@ -17,6 +17,9 @@ class ExpenseCategory extends Model
         'chart_of_accounts_id',
     ];
 
+    /**
+     * @return BelongsTo<ChartOfAccount, $this>
+     */
     public function chartOfAccount(): BelongsTo
     {
         return $this->belongsTo(ChartOfAccount::class, 'chart_of_accounts_id');
