@@ -3,11 +3,11 @@ name: Tests
 on:
   push:
     branches:
-      - master
-      - '*.x'
+      - '**'
   pull_request:
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,7 +19,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        # Matches composer.json's "php": "^8.3" — this project's actual
+        # declared floor since it started (Laravel 12, PHP 8.3+/8.4). A
+        # stale 8.2 leg here was silently failing (spatie/laravel-
+        # permission and other deps require ^8.3), unrelated to whatever
+        # commit was actually being tested.
+        php: [8.3, 8.4]
 
     name: PHP ${{ matrix.php }}
 
