@@ -4,6 +4,7 @@ namespace Modules\Sales\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Products\Models\Product;
 use Modules\Purchases\Models\PurchaseBatch;
 
@@ -33,17 +34,17 @@ class SaleItem extends Model
         'line_total' => 'decimal:2',
     ];
 
-    public function sale()
+    public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function batch()
+    public function batch(): BelongsTo
     {
         return $this->belongsTo(PurchaseBatch::class, 'batch_id');
     }

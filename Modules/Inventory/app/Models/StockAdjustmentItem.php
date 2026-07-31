@@ -4,6 +4,7 @@ namespace Modules\Inventory\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Products\Models\Product;
 
 class StockAdjustmentItem extends Model
@@ -21,12 +22,12 @@ class StockAdjustmentItem extends Model
         'quantity' => 'decimal:3',
     ];
 
-    public function stockAdjustment()
+    public function stockAdjustment(): BelongsTo
     {
         return $this->belongsTo(StockAdjustment::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }

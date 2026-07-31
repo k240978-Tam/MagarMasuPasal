@@ -5,6 +5,7 @@ namespace Modules\Customers\Models;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\AuditLog\Traits\Auditable;
 
@@ -26,7 +27,7 @@ class Customer extends Model
         'current_due' => 'decimal:2',
     ];
 
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(CustomerGroup::class, 'customer_group_id');
     }

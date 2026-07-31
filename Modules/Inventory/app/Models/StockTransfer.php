@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\AuditLog\Traits\Auditable;
 use Modules\Tenancy\Models\Branch;
 
@@ -28,27 +30,27 @@ class StockTransfer extends Model
         'received_at' => 'datetime',
     ];
 
-    public function fromBranch()
+    public function fromBranch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'from_branch_id');
     }
 
-    public function toBranch()
+    public function toBranch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'to_branch_id');
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(StockTransferItem::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function receivedBy()
+    public function receivedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'received_by');
     }

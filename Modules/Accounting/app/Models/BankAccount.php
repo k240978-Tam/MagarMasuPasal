@@ -4,6 +4,7 @@ namespace Modules\Accounting\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BankAccount extends Model
 {
@@ -23,7 +24,7 @@ class BankAccount extends Model
         'opening_balance' => 'decimal:2',
     ];
 
-    public function chartOfAccount()
+    public function chartOfAccount(): BelongsTo
     {
         return $this->belongsTo(ChartOfAccount::class, 'chart_of_accounts_id');
     }

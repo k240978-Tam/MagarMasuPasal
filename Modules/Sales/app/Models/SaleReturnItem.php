@@ -4,6 +4,7 @@ namespace Modules\Sales\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaleReturnItem extends Model
 {
@@ -22,12 +23,12 @@ class SaleReturnItem extends Model
         'refund_amount' => 'decimal:2',
     ];
 
-    public function saleReturn()
+    public function saleReturn(): BelongsTo
     {
         return $this->belongsTo(SaleReturn::class);
     }
 
-    public function saleItem()
+    public function saleItem(): BelongsTo
     {
         return $this->belongsTo(SaleItem::class);
     }

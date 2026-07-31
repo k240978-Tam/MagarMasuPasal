@@ -7,6 +7,8 @@ use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -78,17 +80,17 @@ class User extends Authenticatable
         ];
     }
 
-    public function business()
+    public function business(): BelongsTo
     {
         return $this->belongsTo(Business::class);
     }
 
-    public function defaultBranch()
+    public function defaultBranch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'default_branch_id');
     }
 
-    public function branches()
+    public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class, 'user_branch')->withPivot('is_default')->withTimestamps();
     }

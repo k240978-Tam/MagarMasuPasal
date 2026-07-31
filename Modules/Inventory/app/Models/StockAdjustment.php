@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\AuditLog\Traits\Auditable;
 use Modules\Tenancy\Models\Branch;
 
@@ -22,22 +24,22 @@ class StockAdjustment extends Model
         'approved_by',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(StockAdjustmentItem::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function approvedBy()
+    public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }

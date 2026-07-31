@@ -4,6 +4,7 @@ namespace Modules\Accounting\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BankReconciliationItem extends Model
 {
@@ -20,12 +21,12 @@ class BankReconciliationItem extends Model
         'is_matched' => 'boolean',
     ];
 
-    public function bankReconciliation()
+    public function bankReconciliation(): BelongsTo
     {
         return $this->belongsTo(BankReconciliation::class);
     }
 
-    public function journalEntryLine()
+    public function journalEntryLine(): BelongsTo
     {
         return $this->belongsTo(JournalEntryLine::class);
     }

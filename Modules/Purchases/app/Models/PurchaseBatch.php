@@ -5,6 +5,7 @@ namespace Modules\Purchases\Models;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Products\Models\Product;
 use Modules\Tenancy\Models\Branch;
 
@@ -33,17 +34,17 @@ class PurchaseBatch extends Model
         'received_at' => 'datetime',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function purchaseOrderItem()
+    public function purchaseOrderItem(): BelongsTo
     {
         return $this->belongsTo(PurchaseOrderItem::class);
     }

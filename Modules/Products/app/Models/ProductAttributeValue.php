@@ -4,6 +4,7 @@ namespace Modules\Products\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Settings\Models\ProductAttributeDefinition;
 
 class ProductAttributeValue extends Model
@@ -17,12 +18,12 @@ class ProductAttributeValue extends Model
         'value',
     ];
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function definition()
+    public function definition(): BelongsTo
     {
         return $this->belongsTo(ProductAttributeDefinition::class, 'attribute_definition_id');
     }

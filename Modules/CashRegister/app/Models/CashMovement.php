@@ -5,6 +5,7 @@ namespace Modules\CashRegister\Models;
 use App\Models\User;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CashMovement extends Model
 {
@@ -23,12 +24,12 @@ class CashMovement extends Model
         'amount' => 'decimal:2',
     ];
 
-    public function cashSession()
+    public function cashSession(): BelongsTo
     {
         return $this->belongsTo(CashSession::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }

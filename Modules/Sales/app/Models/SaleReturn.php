@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\AuditLog\Traits\Auditable;
 
 class SaleReturn extends Model
@@ -25,17 +27,17 @@ class SaleReturn extends Model
         'refund_amount' => 'decimal:2',
     ];
 
-    public function sale()
+    public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
-    public function approvedBy()
+    public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(SaleReturnItem::class);
     }

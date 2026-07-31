@@ -5,6 +5,7 @@ namespace Modules\PaymentManager\Models;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class PaymentTransaction extends Model
 {
@@ -32,7 +33,7 @@ class PaymentTransaction extends Model
         'processed_at' => 'datetime',
     ];
 
-    public function payable()
+    public function payable(): MorphTo
     {
         return $this->morphTo();
     }

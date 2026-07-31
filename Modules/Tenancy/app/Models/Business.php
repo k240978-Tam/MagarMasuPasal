@@ -4,6 +4,8 @@ namespace Modules\Tenancy\Models;
 
 use App\Support\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -31,12 +33,12 @@ class Business extends Model
         'pan_vat_number' => 'encrypted',
     ];
 
-    public function businessType()
+    public function businessType(): BelongsTo
     {
         return $this->belongsTo(BusinessType::class);
     }
 
-    public function branches()
+    public function branches(): HasMany
     {
         return $this->hasMany(Branch::class);
     }

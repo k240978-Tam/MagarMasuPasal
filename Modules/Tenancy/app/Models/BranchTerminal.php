@@ -5,6 +5,7 @@ namespace Modules\Tenancy\Models;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BranchTerminal extends Model
 {
@@ -22,7 +23,7 @@ class BranchTerminal extends Model
         'last_seen_at' => 'datetime',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }

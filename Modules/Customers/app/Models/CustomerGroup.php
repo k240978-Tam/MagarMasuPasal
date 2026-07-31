@@ -4,6 +4,7 @@ namespace Modules\Customers\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomerGroup extends Model
 {
@@ -23,7 +24,7 @@ class CustomerGroup extends Model
         'default_discount_percent' => 'decimal:2',
     ];
 
-    public function customers()
+    public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);
     }

@@ -4,6 +4,7 @@ namespace Modules\AuditLog\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Append-only. Rows are never updated or deleted by application code —
@@ -32,7 +33,7 @@ class AuditLog extends Model
         'new_values' => 'array',
     ];
 
-    public function auditable()
+    public function auditable(): MorphTo
     {
         return $this->morphTo();
     }

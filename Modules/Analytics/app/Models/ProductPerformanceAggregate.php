@@ -4,6 +4,7 @@ namespace Modules\Analytics\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Products\Models\Product;
 
 class ProductPerformanceAggregate extends Model
@@ -26,7 +27,7 @@ class ProductPerformanceAggregate extends Model
         'profit' => 'decimal:2',
     ];
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }

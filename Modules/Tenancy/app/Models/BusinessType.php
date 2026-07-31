@@ -3,6 +3,7 @@
 namespace Modules\Tenancy\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Seeded reference data (meat_shop, grocery, pharmacy, ...). Never branched on
@@ -21,7 +22,7 @@ class BusinessType extends Model
         'default_config' => 'array',
     ];
 
-    public function businesses()
+    public function businesses(): HasMany
     {
         return $this->hasMany(Business::class);
     }

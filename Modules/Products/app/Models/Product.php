@@ -5,6 +5,9 @@ namespace Modules\Products\Models;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Modules\AuditLog\Traits\Auditable;
@@ -55,27 +58,27 @@ class Product extends Model
         });
     }
 
-    public function unit()
+    public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
     }
 
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'product_category');
     }
 
-    public function branchSettings()
+    public function branchSettings(): HasMany
     {
         return $this->hasMany(ProductBranchSetting::class);
     }
 
-    public function attributeValues()
+    public function attributeValues(): HasMany
     {
         return $this->hasMany(ProductAttributeValue::class);
     }
 
-    public function taxRule()
+    public function taxRule(): BelongsTo
     {
         return $this->belongsTo(TaxRule::class);
     }

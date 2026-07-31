@@ -4,6 +4,7 @@ namespace Modules\Inventory\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Products\Models\Product;
 use Modules\Tenancy\Models\Branch;
 
@@ -24,12 +25,12 @@ class InventoryStock extends Model
         'quantity_reserved' => 'decimal:3',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }

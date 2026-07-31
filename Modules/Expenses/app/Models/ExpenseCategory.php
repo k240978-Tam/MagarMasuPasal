@@ -4,6 +4,7 @@ namespace Modules\Expenses\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Accounting\Models\ChartOfAccount;
 
 class ExpenseCategory extends Model
@@ -16,7 +17,7 @@ class ExpenseCategory extends Model
         'chart_of_accounts_id',
     ];
 
-    public function chartOfAccount()
+    public function chartOfAccount(): BelongsTo
     {
         return $this->belongsTo(ChartOfAccount::class, 'chart_of_accounts_id');
     }

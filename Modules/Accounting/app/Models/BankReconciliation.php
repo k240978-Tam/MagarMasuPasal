@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BankReconciliation extends Model
 {
@@ -24,17 +26,17 @@ class BankReconciliation extends Model
         'statement_closing_balance' => 'decimal:2',
     ];
 
-    public function bankAccount()
+    public function bankAccount(): BelongsTo
     {
         return $this->belongsTo(BankAccount::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(BankReconciliationItem::class);
     }

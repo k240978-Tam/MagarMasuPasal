@@ -4,6 +4,7 @@ namespace Modules\Units\Models;
 
 use App\Support\Tenancy\SharedOrTenantScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\AuditLog\Traits\Auditable;
 
 /**
@@ -40,7 +41,7 @@ class Unit extends Model
         return $query->withoutGlobalScope(SharedOrTenantScope::class);
     }
 
-    public function baseUnit()
+    public function baseUnit(): BelongsTo
     {
         return $this->belongsTo(self::class, 'base_unit_id');
     }

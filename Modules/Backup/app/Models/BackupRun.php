@@ -4,6 +4,7 @@ namespace Modules\Backup\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BackupRun extends Model
 {
@@ -24,7 +25,7 @@ class BackupRun extends Model
         'finished_at' => 'datetime',
     ];
 
-    public function triggeredBy()
+    public function triggeredBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'triggered_by');
     }

@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\AuditLog\Traits\Auditable;
 use Modules\Customers\Models\Customer;
@@ -41,37 +43,37 @@ class Sale extends Model
         'completed_at' => 'datetime',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function terminal()
+    public function terminal(): BelongsTo
     {
         return $this->belongsTo(BranchTerminal::class, 'terminal_id');
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function cashier()
+    public function cashier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cashier_id');
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(SalePayment::class);
     }
 
-    public function returns()
+    public function returns(): HasMany
     {
         return $this->hasMany(SaleReturn::class);
     }

@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\HasPublicId;
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\AuditLog\Traits\Auditable;
 use Modules\Tenancy\Models\Branch;
 use Modules\Tenancy\Models\BranchTerminal;
@@ -38,27 +40,27 @@ class CashSession extends Model
         'closed_at' => 'datetime',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function terminal()
+    public function terminal(): BelongsTo
     {
         return $this->belongsTo(BranchTerminal::class, 'terminal_id');
     }
 
-    public function openedBy()
+    public function openedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'opened_by');
     }
 
-    public function closedBy()
+    public function closedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'closed_by');
     }
 
-    public function movements()
+    public function movements(): HasMany
     {
         return $this->hasMany(CashMovement::class);
     }

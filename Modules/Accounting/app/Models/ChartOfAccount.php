@@ -4,6 +4,8 @@ namespace Modules\Accounting\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ChartOfAccount extends Model
 {
@@ -24,12 +26,12 @@ class ChartOfAccount extends Model
         'is_system' => 'boolean',
     ];
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    public function lines()
+    public function lines(): HasMany
     {
         return $this->hasMany(JournalEntryLine::class, 'account_id');
     }

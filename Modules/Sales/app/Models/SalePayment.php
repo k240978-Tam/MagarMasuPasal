@@ -4,6 +4,7 @@ namespace Modules\Sales\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\PaymentManager\Models\PaymentTransaction;
 
 class SalePayment extends Model
@@ -21,12 +22,12 @@ class SalePayment extends Model
         'amount' => 'decimal:2',
     ];
 
-    public function sale()
+    public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
-    public function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(PaymentTransaction::class, 'payment_transaction_id');
     }

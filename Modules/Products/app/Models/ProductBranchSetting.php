@@ -4,6 +4,7 @@ namespace Modules\Products\Models;
 
 use App\Support\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Tenancy\Models\Branch;
 
 class ProductBranchSetting extends Model
@@ -25,12 +26,12 @@ class ProductBranchSetting extends Model
         'selling_price_override' => 'decimal:2',
     ];
 
-    public function branch()
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
