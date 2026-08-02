@@ -34,6 +34,9 @@
                     @can('reports.view')
                         <a href="{{ route('reports.sales') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('reports.*') ? 'bg-surface-2 text-ink' : '' }}">Reports</a>
                     @endcan
+                    @can('sales.manage')
+                        <a href="{{ route('online-orders.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('online-orders.*') ? 'bg-surface-2 text-ink' : '' }}">Online Orders</a>
+                    @endcan
                     @can('inventory.manage')
                         @if (app(\Modules\Settings\Services\SettingsService::class)->isFeatureEnabled(auth()->user()->business_id, 'stock_transfers'))
                             <a href="{{ route('inventory.transfers.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('inventory.*') ? 'bg-surface-2 text-ink' : '' }}">Transfers</a>

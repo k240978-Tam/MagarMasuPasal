@@ -21,5 +21,6 @@
     "Analytics": true,
     "Reports": true,
     "Dashboard": true,
-    "Backup": true
+    "Backup": true,
+    "Ecommerce": true
 }
