@@ -5,6 +5,7 @@ use Modules\UserManagement\Http\Controllers\ApiTokenController;
 use Modules\UserManagement\Http\Controllers\Auth\LoginController;
 use Modules\UserManagement\Http\Controllers\Auth\TwoFactorChallengeController;
 use Modules\UserManagement\Http\Controllers\TwoFactorController;
+use Modules\UserManagement\Http\Controllers\UserController;
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');
@@ -30,5 +31,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ApiTokenController::class, 'index'])->name('index');
         Route::post('/', [ApiTokenController::class, 'store'])->name('store');
         Route::delete('{token}', [ApiTokenController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::middleware('can:users.manage')->prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::patch('{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 });
