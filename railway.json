@@ -5,7 +5,6 @@
     "dockerfile": "Dockerfile.railway"
   },
   "deploy": {
-    "startCommand": "php artisan migrate --force && vendor/bin/heroku-php-apache2 public/",
     "restartPolicyType": "on_failure",
     "restartPolicyMaxRetries": 10
   }

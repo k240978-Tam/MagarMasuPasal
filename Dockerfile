@@ -69,6 +69,9 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /et
     Require all granted\n\
 </Directory>' >> /etc/apache2/sites-available/000-default.conf
 
+# Configure Apache to listen on port 8080
+RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf
+
 # Expose port
 EXPOSE 8080
 
