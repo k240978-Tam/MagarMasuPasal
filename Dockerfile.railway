@@ -1,6 +1,11 @@
-FROM heroku/heroku:22
+FROM ubuntu:24.04
 
-# Install PHP 8.3 and required extensions
+# Set environment
+ENV DEBIAN_FRONTEND=noninteractive \
+    PHP_VERSION=8.3 \
+    COMPOSER_ALLOW_SUPERUSER=1
+
+# Install PHP 8.3 and extensions
 RUN apt-get update && apt-get install -y \
     php8.3 \
     php8.3-cli \
@@ -20,24 +25,25 @@ RUN apt-get update && apt-get install -y \
     php8.3-memcached \
     php8.3-redis \
     php8.3-imap \
+    apache2 \
+    libapache2-mod-php8.3 \
     composer \
     curl \
     git \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js for Vite
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+# Enable Apache modules
+RUN a2enmod rewrite headers php8.3
 
 # Set working directory
-WORKDIR /app
+WORKDIR /var/www/html
 
 # Copy application
-COPY . .
+COPY . /var/www/html/
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Install Node dependencies and build assets
 RUN npm ci && npm run build
@@ -46,10 +52,19 @@ RUN npm ci && npm run build
 RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
 
 # Set permissions
-RUN chmod -R 775 storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html
+
+# Configure Apache for Laravel
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
+    echo '<Directory /var/www/html/public>\n\
+    Options -MultiViews +FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' >> /etc/apache2/sites-available/000-default.conf
 
 # Expose port
 EXPOSE 8080
 
-# Start application
-CMD ["vendor/bin/heroku-php-apache2", "public/"]
+# Start Apache
+CMD ["apache2ctl", "-D", "FOREGROUND"]
