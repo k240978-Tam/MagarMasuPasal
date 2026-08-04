@@ -1,0 +1,70 @@
+FROM ubuntu:24.04
+
+# Set environment
+ENV DEBIAN_FRONTEND=noninteractive \
+    PHP_VERSION=8.3 \
+    COMPOSER_ALLOW_SUPERUSER=1
+
+# Install PHP 8.3 and extensions
+RUN apt-get update && apt-get install -y \
+    php8.3 \
+    php8.3-cli \
+    php8.3-fpm \
+    php8.3-pgsql \
+    php8.3-mysql \
+    php8.3-sqlite3 \
+    php8.3-curl \
+    php8.3-mbstring \
+    php8.3-xml \
+    php8.3-bcmath \
+    php8.3-gd \
+    php8.3-zip \
+    php8.3-soap \
+    php8.3-intl \
+    php8.3-ldap \
+    php8.3-memcached \
+    php8.3-redis \
+    php8.3-imap \
+    apache2 \
+    libapache2-mod-php8.3 \
+    composer \
+    curl \
+    git \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
+
+# Enable Apache modules
+RUN a2enmod rewrite headers php8.3
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application
+COPY . /var/www/html/
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install Node dependencies and build assets
+RUN npm ci && npm run build
+
+# Create necessary directories
+RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
+
+# Set permissions
+RUN chmod -R 775 storage bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html
+
+# Configure Apache for Laravel
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
+    echo '<Directory /var/www/html/public>\n\
+    Options -MultiViews +FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' >> /etc/apache2/sites-available/000-default.conf
+
+# Expose port
+EXPOSE 8080
+
+# Start Apache
+CMD ["apache2ctl", "-D", "FOREGROUND"]
