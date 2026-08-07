@@ -57,12 +57,6 @@ RUN npm ci && npm run build
 # Create necessary directories
 RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
 
-# Clear and rebuild caches for production
-RUN php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan config:cache && \
-    php artisan route:cache
-
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data /var/www/html
