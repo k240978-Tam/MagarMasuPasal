@@ -57,9 +57,19 @@ RUN npm ci && npm run build
 # Create necessary directories
 RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
 
+# Clear and rebuild caches for production
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan config:cache && \
+    php artisan route:cache
+
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data /var/www/html
+
+# Copy startup script
+COPY start-server.sh /start-server.sh
+RUN chmod +x /start-server.sh
 
 # Configure Apache for Laravel
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
@@ -75,5 +85,5 @@ RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf
 # Expose port
 EXPOSE 8080
 
-# Start Apache
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+# Start using the startup script
+CMD ["/start-server.sh"]
