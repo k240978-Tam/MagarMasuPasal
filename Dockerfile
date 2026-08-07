@@ -67,10 +67,6 @@ RUN php artisan config:clear && \
 RUN chmod -R 775 storage bootstrap/cache && \
     chown -R www-data:www-data /var/www/html
 
-# Copy startup script
-COPY start-server.sh /start-server.sh
-RUN chmod +x /start-server.sh
-
 # Configure Apache for Laravel
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
     echo '<Directory /var/www/html/public>\n\
@@ -85,5 +81,5 @@ RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf
 # Expose port
 EXPOSE 8080
 
-# Start using the startup script
-CMD ["/start-server.sh"]
+# Start Apache with migrations
+CMD sh -c "php artisan migrate --force && apache2ctl -D FOREGROUND"
