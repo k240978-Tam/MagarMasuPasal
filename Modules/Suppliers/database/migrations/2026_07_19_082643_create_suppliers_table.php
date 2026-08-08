@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('phone', 30)->nullable();
             $table->string('email', 150)->nullable();
             $table->string('address')->nullable();
-            $table->string('pan_vat_number', 30)->nullable();
+            // text: the model encrypts this field and ciphertext far exceeds 30 chars
+            $table->text('pan_vat_number')->nullable();
             $table->text('bank_details')->nullable();
             $table->decimal('current_due', 14, 2)->default(0);
             $table->enum('status', ['active', 'inactive'])->default('active');

@@ -14,7 +14,8 @@ return new class extends Migration
             $table->string('name', 150);
             $table->string('legal_name', 150)->nullable();
             $table->foreignId('business_type_id')->constrained('business_types')->restrictOnDelete();
-            $table->string('pan_vat_number', 30)->nullable();
+            // text: the model encrypts this field and ciphertext far exceeds 30 chars
+            $table->text('pan_vat_number')->nullable();
             $table->char('currency', 3)->default('NPR');
             $table->string('timezone', 50)->default('Asia/Kathmandu');
             $table->unsignedBigInteger('logo_media_id')->nullable();

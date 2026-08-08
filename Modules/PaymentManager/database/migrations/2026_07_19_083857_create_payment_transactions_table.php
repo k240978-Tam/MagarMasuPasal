@@ -19,7 +19,10 @@ return new class extends Migration
             $table->char('currency', 3)->default('NPR');
             $table->enum('status', ['pending', 'authorized', 'captured', 'failed', 'cancelled', 'refunded'])->default('pending');
             $table->string('gateway_reference', 100)->nullable();
-            $table->json('meta')->nullable();
+            // text, not json: the model encrypts meta (encrypted:array cast),
+            // and the ciphertext is not valid JSON — Postgres rejects it in a
+            // json column even though SQLite happily stored it in dev.
+            $table->text('meta')->nullable();
             $table->timestamp('processed_at')->nullable();
             $table->timestamps();
 
