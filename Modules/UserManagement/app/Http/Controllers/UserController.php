@@ -78,7 +78,7 @@ class UserController extends Controller
             ->orderBy('name')
             ->get();
 
-        $userRole = $user->roles->first()?->name;
+        $userRole = $user->getRoleNames()->first();
 
         return view('usermanagement::users.edit', [
             'user' => $user,

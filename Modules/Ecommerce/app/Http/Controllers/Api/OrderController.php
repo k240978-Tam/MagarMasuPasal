@@ -8,9 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Modules\Ecommerce\Models\OnlineOrder;
 use Modules\Ecommerce\Models\OnlineOrderItem;
-use Modules\Inventory\Models\InventoryItem;
+use Modules\Inventory\Models\InventoryStock;
 use Modules\Products\Models\Product;
-use Modules\Settings\Models\TaxRule;
 
 class OrderController extends Controller
 {
@@ -50,12 +49,12 @@ class OrderController extends Controller
                 return response()->json(['error' => "Product {$item['product_id']} not found"], 404);
             }
 
-            $inventory = InventoryItem::where('business_id', $businessId)
+            $stock = InventoryStock::where('business_id', $businessId)
                 ->where('branch_id', $branchId)
                 ->where('product_id', $product->id)
                 ->first();
 
-            if (! $inventory || $inventory->quantity < $item['quantity']) {
+            if (! $stock || $stock->availableQty() < $item['quantity']) {
                 return response()->json(
                     ['error' => "Insufficient stock for {$product->name}"],
                     400
@@ -95,10 +94,10 @@ class OrderController extends Controller
                 'online_order_id' => $order->id,
             ]));
 
-            InventoryItem::where('business_id', $businessId)
+            InventoryStock::where('business_id', $businessId)
                 ->where('branch_id', $branchId)
                 ->where('product_id', $item['product_id'])
-                ->decrement('quantity', $item['quantity']);
+                ->decrement('quantity_on_hand', $item['quantity']);
         }
 
         return response()->json([
@@ -142,7 +141,7 @@ class OrderController extends Controller
                 'tax_amount' => $order->tax_amount,
                 'total_amount' => $order->total_amount,
                 'items' => $order->items->map(fn (OnlineOrderItem $item) => [
-                    'product_name' => $item->product->name,
+                    'product_name' => $item->product?->name,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,
                     'tax_rate' => $item->tax_rate,

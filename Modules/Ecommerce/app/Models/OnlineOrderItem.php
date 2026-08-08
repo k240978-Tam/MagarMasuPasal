@@ -18,11 +18,17 @@ class OnlineOrderItem extends Model
         'line_total',
     ];
 
+    /**
+     * @return BelongsTo<OnlineOrder, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(OnlineOrder::class, 'online_order_id');
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
