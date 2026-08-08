@@ -100,8 +100,11 @@ class ReportService
 
     public function peakSellingHours(int $businessId, ?int $branchId, string $from, string $to): Collection
     {
-        $driver = DB::connection()->getDriverName();
-        $hourExpr = $driver === 'sqlite' ? "strftime('%H', completed_at)" : 'HOUR(completed_at)';
+        $hourExpr = match (DB::connection()->getDriverName()) {
+            'sqlite' => "strftime('%H', completed_at)",
+            'pgsql' => "to_char(completed_at, 'HH24')",
+            default => 'HOUR(completed_at)',
+        };
 
         return DB::table('sales')
             ->where('business_id', $businessId)
