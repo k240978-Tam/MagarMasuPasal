@@ -7,6 +7,7 @@ use App\Support\Tenancy\TenantContext;
 use App\Support\Tenancy\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Production always sits behind a TLS-terminating proxy (Railway);
+        // forcing the scheme keeps every generated URL (assets, forms,
+        // redirects) on https even if a proxy strips X-Forwarded-Proto.
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         $this->configureRateLimiting();
     }
 
