@@ -51,6 +51,17 @@ COPY . /var/www/html/
 RUN composer install --no-dev --optimize-autoloader --no-interaction && \
     composer dump-autoload --no-interaction
 
+# Vite bakes VITE_* values into the built assets, and Railway only passes
+# service variables into a Dockerfile build when they are declared as ARGs.
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST
+ARG VITE_REVERB_PORT=443
+ARG VITE_REVERB_SCHEME=https
+ENV VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY} \
+    VITE_REVERB_HOST=${VITE_REVERB_HOST} \
+    VITE_REVERB_PORT=${VITE_REVERB_PORT} \
+    VITE_REVERB_SCHEME=${VITE_REVERB_SCHEME}
+
 # Install Node dependencies and build assets
 RUN npm ci && npm run build
 
