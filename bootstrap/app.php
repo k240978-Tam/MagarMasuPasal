@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind Railway/any TLS-terminating proxy the app receives plain
+        // HTTP; trusting the proxy's X-Forwarded-* headers lets Laravel see
+        // the original HTTPS scheme so generated URLs and cookies are secure.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'tenant' => ResolveTenant::class,
         ]);
