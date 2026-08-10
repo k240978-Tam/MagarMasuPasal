@@ -31,6 +31,9 @@
                             <a href="{{ route('pos.screen', $navTerminal->public_id) }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink">Point of Sale</a>
                         @endif
                     @endcan
+                    @can('products.manage')
+                        <a href="{{ route('products.index') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('products.*') ? 'bg-surface-2 text-ink' : '' }}">Products</a>
+                    @endcan
                     @can('reports.view')
                         <a href="{{ route('reports.sales') }}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink {{ request()->routeIs('reports.*') ? 'bg-surface-2 text-ink' : '' }}">Reports</a>
                     @endcan
