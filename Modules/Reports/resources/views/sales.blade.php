@@ -11,6 +11,8 @@
             </a>
         </div>
 
+        @include('accounting::reports.partials.tabs')
+
         <form method="GET" class="flex flex-wrap items-end gap-3 rounded-xl border border-line bg-surface p-4">
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wide text-ink-soft">From</label>
