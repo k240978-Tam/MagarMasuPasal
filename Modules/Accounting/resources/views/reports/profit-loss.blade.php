@@ -2,22 +2,12 @@
     <div class="flex flex-col gap-6 max-w-4xl">
         <div>
             <h1 class="text-2xl font-semibold text-ink text-balance">Profit &amp; Loss</h1>
-            <p class="mt-1 text-sm text-ink-soft">{{ $from }} to {{ $to }} — derived from posted journal entries.</p>
+            <p class="mt-1 text-sm text-ink-soft">{{ $period->label }} — derived from posted journal entries.</p>
         </div>
 
         @include('accounting::reports.partials.tabs')
 
-        <form method="GET" class="flex flex-wrap items-end gap-3 rounded-xl border border-line bg-surface p-4">
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wide text-ink-soft">From</label>
-                <input type="date" name="from" value="{{ $from }}" class="mt-1 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wide text-ink-soft">To</label>
-                <input type="date" name="to" value="{{ $to }}" class="mt-1 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm">
-            </div>
-            <button type="submit" class="rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold text-accent-ink">Apply</button>
-        </form>
+        @include('accounting::reports.partials.period-picker', ['exportRoute' => 'accounting.reports.export.profit-loss'])
 
         <div class="grid gap-4 sm:grid-cols-3">
             <div class="rounded-xl border border-line bg-surface p-4">

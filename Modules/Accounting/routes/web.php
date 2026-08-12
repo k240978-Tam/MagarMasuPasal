@@ -9,4 +9,11 @@ Route::middleware(['auth', 'can:reports.view'])->prefix('accounting/reports')->n
     Route::get('balance-sheet', [FinancialReportController::class, 'balanceSheet'])->name('balance-sheet');
     Route::get('cash-book', [FinancialReportController::class, 'cashBook'])->name('cash-book');
     Route::get('ledger', [FinancialReportController::class, 'ledger'])->name('ledger');
+
+    // One export endpoint, named per report so views can link to it directly.
+    foreach (['profit-loss', 'trial-balance', 'balance-sheet', 'cash-book', 'ledger'] as $report) {
+        Route::get("{$report}/export", [FinancialReportController::class, 'export'])
+            ->defaults('report', $report)
+            ->name("export.{$report}");
+    }
 });

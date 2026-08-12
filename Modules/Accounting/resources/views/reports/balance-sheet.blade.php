@@ -2,18 +2,12 @@
     <div class="flex flex-col gap-6 max-w-4xl">
         <div>
             <h1 class="text-2xl font-semibold text-ink text-balance">Balance Sheet</h1>
-            <p class="mt-1 text-sm text-ink-soft">As of {{ $asOf }}.</p>
+            <p class="mt-1 text-sm text-ink-soft">As of {{ $period->asOf()->toDateString() }} ({{ $period->label }}).</p>
         </div>
 
         @include('accounting::reports.partials.tabs')
 
-        <form method="GET" class="flex flex-wrap items-end gap-3 rounded-xl border border-line bg-surface p-4">
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wide text-ink-soft">As of</label>
-                <input type="date" name="as_of" value="{{ $asOf }}" class="mt-1 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm">
-            </div>
-            <button type="submit" class="rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold text-accent-ink">Apply</button>
-        </form>
+        @include('accounting::reports.partials.period-picker', ['exportRoute' => 'accounting.reports.export.balance-sheet'])
 
         <div class="grid gap-4 sm:grid-cols-3">
             <div class="rounded-xl border border-line bg-surface p-4">

@@ -176,6 +176,65 @@ final class NepaliDate
     }
 
     /**
+     * First and last AD dates of a BS month — the range behind "Shrawan 2083"
+     * as a report period.
+     *
+     * @return array{0: CarbonImmutable, 1: CarbonImmutable}
+     */
+    public static function monthRange(int $year, int $month): array
+    {
+        if (! isset(self::MONTH_DAYS[$year])) {
+            throw new InvalidArgumentException("Bikram Sambat year [{$year}] is outside the calendar data.");
+        }
+
+        if ($month < 1 || $month > 12) {
+            throw new InvalidArgumentException("Bikram Sambat month [{$month}] is out of range.");
+        }
+
+        $start = self::toAd($year, $month, 1);
+        $end = $start->addDays(self::MONTH_DAYS[$year][$month - 1] - 1);
+
+        return [$start, $end];
+    }
+
+    public static function monthLabel(int $year, int $month): string
+    {
+        return self::MONTH_NAMES[$month].' '.$year;
+    }
+
+    /**
+     * BS months ending at the given date, newest first, for a month picker.
+     * Months outside the calendar data are skipped rather than guessed.
+     *
+     * @return array<int, array{value: string, label: string}>
+     */
+    public static function recentMonths(int $count = 24, CarbonInterface|string|null $endingAt = null): array
+    {
+        $current = self::fromAd($endingAt ?? now());
+        $year = $current['year'];
+        $month = $current['month'];
+        $months = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            if (isset(self::MONTH_DAYS[$year])) {
+                $months[] = [
+                    'value' => sprintf('%04d-%02d', $year, $month),
+                    'label' => self::monthLabel($year, $month),
+                ];
+            }
+
+            $month--;
+
+            if ($month < 1) {
+                $month = 12;
+                $year--;
+            }
+        }
+
+        return $months;
+    }
+
+    /**
      * Nepali fiscal year label for an AD date, e.g. "2083/84". The year runs
      * Shrawan 1 → Ashadh end, so dates before Shrawan belong to the fiscal
      * year that opened in the previous BS year.
