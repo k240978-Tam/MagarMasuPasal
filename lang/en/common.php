@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'save' => 'Save',
+    'cancel' => 'Cancel',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'add' => 'Add',
+    'search' => 'Search',
+    'actions' => 'Actions',
+    'status' => 'Status',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'name' => 'Name',
+    'date' => 'Date',
+    'total' => 'Total',
+    'yes' => 'Yes',
+    'no' => 'No',
+    'none' => 'None',
+    'optional' => 'Optional',
+    'required' => 'Required',
+    'back' => 'Back',
+    'confirm' => 'Confirm',
+    'rupees' => 'Rs',
+    'language_changed' => 'Language updated.',
+];

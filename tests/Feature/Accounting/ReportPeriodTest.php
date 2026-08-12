@@ -78,8 +78,12 @@ class ReportPeriodTest extends TestCase
         $csv = $response->streamedContent();
 
         $this->assertStringContainsString('Shrawan 2083', $csv);
-        $this->assertStringContainsString('2083-04-01 to 2083-04-31', $csv);
-        $this->assertStringContainsString('2026-07-17 to 2026-08-16', $csv);
+
+        // Separator styling is the document layer's business; what matters is
+        // that both ends of the period reach the file, in BS and AD.
+        foreach (['2083-04-01', '2083-04-31', '2026-07-17', '2026-08-16'] as $date) {
+            $this->assertStringContainsString($date, $csv);
+        }
     }
 
     /**

@@ -66,7 +66,7 @@ ENV VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY} \
 RUN npm ci && npm run build
 
 # Create necessary directories
-RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
+RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views storage/fonts
 
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache && \

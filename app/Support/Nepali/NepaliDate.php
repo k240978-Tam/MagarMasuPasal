@@ -172,7 +172,7 @@ final class NepaliDate
     {
         $bs = self::fromAd($date);
 
-        return sprintf('%d %s %d', $bs['day'], self::MONTH_NAMES[$bs['month']], $bs['year']);
+        return sprintf('%d %s %d', $bs['day'], self::monthName($bs['month']), $bs['year']);
     }
 
     /**
@@ -197,9 +197,29 @@ final class NepaliDate
         return [$start, $end];
     }
 
+    /**
+     * Month name in the active interface language, falling back to the
+     * romanised name when no translation is loaded (console, tests).
+     */
+    public static function monthName(int $month): string
+    {
+        $fallback = self::MONTH_NAMES[$month];
+
+        // Usable outside a booted application (unit tests, plain scripts),
+        // where no translator is bound.
+        if (! function_exists('app') || ! app()->bound('translator')) {
+            return $fallback;
+        }
+
+        $key = 'nepali.months.'.$month;
+        $translated = trans($key);
+
+        return is_string($translated) && $translated !== $key ? $translated : $fallback;
+    }
+
     public static function monthLabel(int $year, int $month): string
     {
-        return self::MONTH_NAMES[$month].' '.$year;
+        return self::monthName($month).' '.$year;
     }
 
     /**
