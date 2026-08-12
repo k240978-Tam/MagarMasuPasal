@@ -6,6 +6,7 @@
         ['label' => 'Balance Sheet', 'route' => 'accounting.reports.balance-sheet', 'active' => request()->routeIs('accounting.reports.balance-sheet')],
         ['label' => 'Cash Book', 'route' => 'accounting.reports.cash-book', 'active' => request()->routeIs('accounting.reports.cash-book')],
         ['label' => 'Ledger', 'route' => 'accounting.reports.ledger', 'active' => request()->routeIs('accounting.reports.ledger')],
+        ['label' => 'Sales Book (IRD)', 'route' => 'ird.sales-book', 'active' => request()->routeIs('ird.*')],
     ];
 @endphp
 

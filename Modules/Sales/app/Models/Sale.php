@@ -25,6 +25,10 @@ class Sale extends Model
         'customer_id',
         'cashier_id',
         'invoice_no',
+        'fiscal_year',
+        'fiscal_sequence',
+        'buyer_name',
+        'buyer_pan',
         'subtotal',
         'discount_amount',
         'tax_amount',
@@ -33,6 +37,14 @@ class Sale extends Model
         'sale_type',
         'notes',
         'completed_at',
+        'print_count',
+        'first_printed_at',
+        'cancelled_at',
+        'cancelled_by',
+        'cancellation_reason',
+        'ird_sync_status',
+        'ird_synced_at',
+        'ird_sync_error',
     ];
 
     protected $casts = [
@@ -41,6 +53,10 @@ class Sale extends Model
         'tax_amount' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'completed_at' => 'datetime',
+        'first_printed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'ird_synced_at' => 'datetime',
+        'buyer_pan' => 'encrypted',
     ];
 
     /**

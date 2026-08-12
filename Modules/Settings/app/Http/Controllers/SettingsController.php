@@ -30,11 +30,28 @@ class SettingsController extends Controller
         $enabledFlags = $settings->get($businessId, 'features', []);
 
         return view('settings::index', [
+            'business' => $request->user()->business,
             'taxRules' => $taxRules,
             'receiptTemplate' => $receiptTemplate,
             'featureFlags' => SettingsService::FEATURE_FLAGS,
             'enabledFlags' => $enabledFlags,
         ]);
+    }
+
+    /**
+     * Seller identity as it must appear on a tax invoice. IRD requires the
+     * registered name and PAN/VAT number on every invoice the shop issues.
+     */
+    public function updateBusinessProfile(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'legal_name' => ['nullable', 'string', 'max:150'],
+            'pan_vat_number' => ['nullable', 'string', 'max:30'],
+        ]);
+
+        $request->user()->business->update($validated);
+
+        return back()->with('status', 'Business tax details updated.');
     }
 
     public function updateReceiptTemplate(UpdateReceiptTemplateRequest $request, SettingsService $settings): RedirectResponse

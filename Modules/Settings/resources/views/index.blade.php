@@ -10,6 +10,32 @@
         @endif
 
         <div class="rounded-xl border border-line bg-surface p-4">
+            <h2 class="text-sm font-semibold">Business Tax Details</h2>
+            <p class="mt-1 text-xs text-ink-soft">
+                IRD requires the registered name and PAN/VAT number to appear on every tax invoice.
+                Leave the PAN blank until the business is registered — invoices then print without it.
+            </p>
+
+            <form method="POST" action="{{ route('settings.business-profile.update') }}" class="mt-3 flex flex-wrap items-end gap-3">
+                @csrf
+                @method('PUT')
+                <div>
+                    <label for="legal_name" class="block text-xs font-semibold uppercase tracking-wide text-ink-soft">Registered Name</label>
+                    <input type="text" id="legal_name" name="legal_name" value="{{ old('legal_name', $business->legal_name) }}"
+                        class="mt-1 w-64 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm" placeholder="As registered with IRD">
+                    @error('legal_name')<p class="mt-1 text-xs text-critical">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="pan_vat_number" class="block text-xs font-semibold uppercase tracking-wide text-ink-soft">PAN / VAT No.</label>
+                    <input type="text" id="pan_vat_number" name="pan_vat_number" value="{{ old('pan_vat_number', $business->pan_vat_number) }}"
+                        class="mt-1 w-48 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm" placeholder="e.g. 301234567">
+                    @error('pan_vat_number')<p class="mt-1 text-xs text-critical">{{ $message }}</p>@enderror
+                </div>
+                <button type="submit" class="rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold text-accent-ink">Save</button>
+            </form>
+        </div>
+
+        <div class="rounded-xl border border-line bg-surface p-4">
             <h2 class="text-sm font-semibold">Tax Rules</h2>
             <p class="mt-1 text-xs text-ink-soft">
                 Products only get taxed when explicitly assigned one of these rules — untagged

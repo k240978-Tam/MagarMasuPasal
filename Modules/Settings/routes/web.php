@@ -6,6 +6,7 @@ use Modules\Settings\Http\Controllers\TaxRuleController;
 
 Route::middleware(['auth', 'can:settings.manage'])->prefix('settings')->name('settings.')->group(function () {
     Route::get('/', [SettingsController::class, 'index'])->name('index');
+    Route::put('business-profile', [SettingsController::class, 'updateBusinessProfile'])->name('business-profile.update');
     Route::put('receipt-template', [SettingsController::class, 'updateReceiptTemplate'])->name('receipt-template.update');
     Route::put('feature-toggles', [SettingsController::class, 'updateFeatureToggles'])->name('feature-toggles.update');
 

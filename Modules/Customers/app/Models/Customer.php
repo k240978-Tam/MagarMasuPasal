@@ -20,11 +20,13 @@ class Customer extends Model
         'phone',
         'email',
         'address',
+        'pan_vat_number',
         'current_due',
     ];
 
     protected $casts = [
         'current_due' => 'decimal:2',
+        'pan_vat_number' => 'encrypted',
     ];
 
     /**

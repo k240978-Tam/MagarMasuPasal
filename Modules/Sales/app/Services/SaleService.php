@@ -25,6 +25,7 @@ class SaleService
     public function __construct(
         protected InventoryService $inventory,
         protected PaymentManager $payments,
+        protected InvoiceNumberService $invoiceNumbers,
     ) {}
 
     public function finalize(FinalizeSaleDTO $dto): Sale
@@ -39,13 +40,25 @@ class SaleService
                 throw new RuntimeException('Payment total is less than the sale total.');
             }
 
+            $number = $this->invoiceNumbers->reserve($dto->businessId);
+            $buyer = $dto->customerId
+                ? Customer::withoutTenantScope()->find($dto->customerId)
+                : null;
+
             $sale = Sale::create([
                 'business_id' => $dto->businessId,
                 'branch_id' => $dto->branchId,
                 'terminal_id' => $dto->terminalId,
                 'customer_id' => $dto->customerId,
+                // Snapshotted, not read through the relation at print time:
+                // a tax invoice must keep the buyer identity it was issued
+                // with even if the customer record is edited later.
+                'buyer_name' => $buyer?->name,
+                'buyer_pan' => $buyer?->pan_vat_number,
                 'cashier_id' => $dto->cashierId,
-                'invoice_no' => $this->nextInvoiceNumber($dto->businessId),
+                'invoice_no' => $number['invoice_no'],
+                'fiscal_year' => $number['fiscal_year'],
+                'fiscal_sequence' => $number['sequence'],
                 'subtotal' => $subtotal,
                 'discount_amount' => $discountTotal,
                 'tax_amount' => $taxTotal,
@@ -236,10 +249,39 @@ class SaleService
         return round($totalCost / $totalQty, 2);
     }
 
-    protected function nextInvoiceNumber(int $businessId): string
+    /**
+     * Cancel an issued tax invoice, per the IRD Electronic Billing Directive:
+     * the invoice and its number are retained (never deleted or reused), a
+     * reason and the responsible user are recorded, and the cancellation is
+     * reportable — while stock and ledger effects are reversed exactly as a
+     * void does.
+     */
+    public function cancelInvoice(Sale $sale, int $userId, string $reason): Sale
     {
-        $count = Sale::withoutTenantScope()->where('business_id', $businessId)->count();
+        if ($sale->cancelled_at !== null) {
+            throw new RuntimeException('This invoice has already been cancelled.');
+        }
 
-        return 'INV-'.str_pad((string) ($count + 1), 5, '0', STR_PAD_LEFT);
+        if (trim($reason) === '') {
+            throw new RuntimeException('A cancellation reason is required.');
+        }
+
+        return DB::transaction(function () use ($sale, $userId, $reason) {
+            if ($sale->status === 'completed') {
+                $this->voidSale($sale, $userId, $reason);
+                $sale->refresh();
+            }
+
+            $sale->update([
+                'cancelled_at' => now(),
+                'cancelled_by' => $userId,
+                'cancellation_reason' => trim($reason),
+                // A cancelled invoice must reach IRD too, so the bill is
+                // marked inactive on their side rather than left dangling.
+                'ird_sync_status' => 'pending',
+            ]);
+
+            return $sale->fresh();
+        });
     }
 }
