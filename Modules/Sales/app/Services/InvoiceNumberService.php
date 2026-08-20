@@ -28,10 +28,18 @@ class InvoiceNumberService
     {
         $fiscalYear = NepaliDate::fiscalYear($date ?? now());
 
+        // Serialize numbering by locking the business row rather than the
+        // sales rows. Postgres rejects FOR UPDATE combined with an aggregate
+        // ("SELECT max(...) ... FOR UPDATE"), and locking the sales rows
+        // would leave the very first sale of a fiscal year unprotected —
+        // there is no row to lock yet. The business row always exists, so two
+        // terminals selling at the same moment queue behind it and cannot
+        // claim the same sequence.
+        DB::table('businesses')->where('id', $businessId)->lockForUpdate()->first();
+
         $lastSequence = (int) Sale::withoutTenantScope()
             ->where('business_id', $businessId)
             ->where('fiscal_year', $fiscalYear)
-            ->lockForUpdate()
             ->max('fiscal_sequence');
 
         $sequence = $lastSequence + 1;
